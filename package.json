@@ -10,8 +10,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.3.5",
+    "body-parser": "^1.15.1",
     "express": "^4.13.4",
+    "express-session": "^1.13.0",
     "mustache": "^2.2.1",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
     "request": "^2.72.0"
   }
 }
