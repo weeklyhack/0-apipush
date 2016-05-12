@@ -1,10 +1,10 @@
 "use strict";
-const Api = require("./apis");
-const Mustache = require("mustache");
-const request = require("request");
-const pathToRegexp = require("path-to-regexp");
-const url = require("url");
-const _ = require("lodash");
+import Api from "./apis";
+import Mustache from "mustache";
+import request from "request";
+import pathToRegexp from "path-to-regexp";
+import url from "url";
+import _ from "lodash";
 
 class VisibleError extends Error {
   constructor(code, name) {
@@ -25,23 +25,13 @@ function stripInitialSlash(data) {
   }
 }
 
-// // strip '/api/v1' off the front of a path. Returns the path with a starting
-// // slash
-// function stripApiVersion(path) {
-//   let out = path.match(/\/api\/.+\/(.+)/g);
-//   if (out) {
-//     return out[0];
-//   } else {
-//     return null;
-//   }
-// }
-
+// format a url inside of a query as a full url
 function asFullUrl(version, path) {
   return `/api/${version}/${stripInitialSlash(path)}`;
 }
 
 // find matching version and route when given req, res, and the selected api
-function getMatchingVersionAndRoute(req, res, api) {
+export function getMatchingVersionAndRoute(req, res, api) {
   let version;
   if (version = api.versions[req.params.version]) {
     // get the route that the user is referencing
@@ -56,7 +46,7 @@ function getMatchingVersionAndRoute(req, res, api) {
     });
 
     if (route && route.proxy.length) {
-      // get url params, and remove the first match of the whole thing
+      // get url params, and remove the first match (of the whole thing)
       let unpairedParams = re.exec(baseUrl).slice(1);
       let params = _.zipObject(
         keys.map(i => i.name),
@@ -76,25 +66,27 @@ function getMatchingVersionAndRoute(req, res, api) {
   }
 }
 
-module.exports = function(req, res) {
-  let version;
+// Make sure the returned api is valid
+export function findMatchingApi(slug, apis) {
+  let api = apis.find(api => api.slug === slug);
+  if (api) {
+    return api;
+  } else {
+    throw new VisibleError(400, `No such api with slug '${slug}'`);
+  }
+}
 
+// ----------------------------------------------------------------------------
+// The full api request handler!!!
+// ------------------------------------------------------------------------------
+export function handleApiRequest(req, res) {
+  // get the api we specified
   Api.findAll()
-  .then(apis => apis.find(api => api.slug === req.query.slug))
-
-  // Make sure the returned api is valid
-  .then(api => {
-    if (api) {
-      return api;
-    } else {
-      throw new VisibleError(400, `No such api with slug '${req.query.slug}'`);
-    }
-  })
+  .then(findMatchingApi.bind(this, req.query.slug))
 
   // get the route that matches the given request
   .then(getMatchingVersionAndRoute.bind(this, req, res))
-  .then(data => {
-    let route = data.route, baseUrl = data.baseUrl, params = data.params;
+  .then(({route, baseUrl, params}) => {
     // send the data to the client's system
     (function(data) {
       // take the proxy route and render each key
@@ -103,9 +95,7 @@ module.exports = function(req, res) {
         if (dataRender.hasOwnProperty(item)) {
           dataRender[item] = Mustache.render(
             dataRender[item],
-            Object.assign({}, req, {
-              params,
-            })
+            Object.assign({}, req, {params})
           );
         }
       }
@@ -117,6 +107,7 @@ module.exports = function(req, res) {
     })(route.proxy[0]);
   })
 
+  // handle errors
   .catch(err => {
     if (err instanceof VisibleError) {
       res.status(err.code).json(err.toJSON());
@@ -124,4 +115,16 @@ module.exports = function(req, res) {
       throw err;
     }
   });
+}
+
+// return the information for an api
+export function getApiInformation(req, res) {
+  Api.findAll()
+  .then(findMatchingApi.bind(this, req.query.slug))
+  .then(({name, slug, desc, versions}) => {
+    res.json({
+      name, slug, desc,
+      versions: Object.keys(versions),
+    });
+  })
 }
