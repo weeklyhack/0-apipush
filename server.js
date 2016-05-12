@@ -45,11 +45,12 @@ function isAuthenticated(req, res, next) {
 // Login user
 // ------------------------------------------------------------------------------
 app.post('/login', passport.authenticate('login', {
-  successRedirect: '/home',
-  failureRedirect: '/',
+  successRedirect: '/',
+  failureRedirect: '/?failure',
   // failureFlash: true ,
 }));
 app.get("/login", (req, res) => res.render("login"));
+app.get("/", (req, res) => res.render("index"));
 
 // ----------------------------------------------------------------------------
 // An api query

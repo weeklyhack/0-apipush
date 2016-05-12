@@ -20,7 +20,7 @@ module.exports = {
                 },
                 proxy: [{
                   method: "GET",
-                  url: "http://jsfiddle.net/echo/json/?q={{query.abc}}",
+                  url: "http://scooterlabs.com/echo?get=devices",
                 }],
               },
               {
@@ -30,7 +30,7 @@ module.exports = {
                 },
                 proxy: [{
                   method: "GET",
-                  url: "http://jsfiddle.net/echo/json/?q={{params.id}}",
+                  url: "http://scooterlabs.com/echo?q={{params.id}}",
                 }],
               },
             ],
