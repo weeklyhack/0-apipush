@@ -1,5 +1,6 @@
 import Mustache from "mustache";
 import Websocket from "ws";
+import isJSON from "is-json";
 
 export default function handleWebsocketsQuery(req, res, stashApi, routeData) {
   let dataRender = Object.assign({}, routeData);
@@ -12,6 +13,11 @@ export default function handleWebsocketsQuery(req, res, stashApi, routeData) {
   });
 
   ws.on('message', (data) => {
+    // if json, sent the corrent headers
+    if (isJSON(data)) {
+      res.header("content-type", "application/json");
+    }
+
     res.send(data);
   });
 }

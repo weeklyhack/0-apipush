@@ -45,6 +45,17 @@ module.exports = {
                   body: "abc",
                 }],
               },
+              {
+                accept: {
+                  method: "GET",
+                  url: "/user/:uid",
+                },
+                proxy: [{
+                  via: "http",
+                  method: "GET",
+                  url: "http://randomuser.me/api/{{params.uid}}",
+                }],
+              }
             ],
           },
         },
