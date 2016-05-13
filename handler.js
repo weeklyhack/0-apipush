@@ -1,11 +1,9 @@
 "use strict";
 import Api from "./apis";
-import parseHeaders from "./parseHeaders";
+import handleHttpQuery from "./handlers/http";
+import handleWebsocketsQuery from "./handlers/websockets";
 
-import Mustache from "mustache";
-import request from "request";
 import pathToRegexp from "path-to-regexp";
-import url from "url";
 import _ from "lodash";
 
 class VisibleError extends Error {
@@ -89,29 +87,17 @@ export function handleApiRequest(req, res) {
   // get the route that matches the given request
   .then(getMatchingVersionAndRoute.bind(this, req, res))
   .then(({route, baseUrl, params}) => {
+    let stashRoot = Object.assign({}, req, {params});
+
     // send the data to the client's system
-    (function(data) {
-      // take the proxy route and render each key
-      let dataRender = Object.assign({}, data);
-      for (let item in dataRender) {
-        if (dataRender.hasOwnProperty(item)) {
-          dataRender[item] = Mustache.render(
-            dataRender[item],
-            Object.assign({}, req, {params})
-          );
-        }
-
-        // for headers, make sure to split on `\n`s
-        if (item === "headers") {
-          dataRender.headers = parseHeaders(dataRender.headers);
-        }
-      }
-
-      // make the request
-      let out = request(dataRender).on('error', err => {
-        res.json({error: err.toString()});
-      }).pipe(res);
-    })(route.proxy[0]);
+    switch (route.proxy[0].via) {
+      case 'http':
+        return handleHttpQuery(req, res, stashRoot, route.proxy[0]);
+      case 'websockets':
+        return handleWebsocketsQuery(req, res, stashRoot, route.proxy[0]);
+      default:
+        throw new VisibleError(500, `No such handler for request: ${route.proxy[0].via}`);
+    }
   })
 
   // handle errors

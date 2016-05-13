@@ -18,10 +18,19 @@ module.exports = {
                   method: "GET",
                   url: "/devices",
                 },
-                proxy: [{
-                  method: "GET",
-                  url: "http://scooterlabs.com/echo?get=devices",
-                }],
+                proxy: [
+                // {
+                //   method: "GET",
+                //   url: "http://scooterlabs.com/echo?get=devices",
+                // }
+                {
+                  via: "websockets",
+                  url: "ws://echo.websocket.org",
+                  send: [
+                    `{"type": "UPDATE", "content": "{{query.value}}"}`,
+                  ],
+                }
+                ],
               },
               {
                 accept: {
@@ -29,6 +38,7 @@ module.exports = {
                   url: "/devices/:id",
                 },
                 proxy: [{
+                  via: "http",
                   method: "POST",
                   url: "http://scooterlabs.com/echo?q={{params.id}}",
                   headers: "Test: {{params.id}}",
