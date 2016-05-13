@@ -1,0 +1,27 @@
+<!--
+The UrlGroup Partial
+Renders a picker to choose a query method and a url
+ie, GET http://example.com
+-->
+<div class="api__route__urlgroup">
+  <div class="api__route__method" name="<%= namespace || '' %>_method">
+    <button
+      type="button"
+      class="btn btn-default dropdown-toggle"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+    >
+      <%= method || "Method" %>
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li><a href >GET</a></li>
+      <li><a href >POST</a></li>
+      <li><a href >PUT</a></li>
+      <li><a href >PATCH</a></li>
+      <li><a href >DELETE</a></li>
+    </ul>
+  </div>
+  <input type="text" class="api__route__url" name="<%= namespace || '' %>_url" placeholder="http://example.com/item/:id" />
+</div>

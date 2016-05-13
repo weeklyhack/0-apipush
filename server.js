@@ -4,14 +4,17 @@ import Promise from "bluebird";
 import express from "express";
 import bodyParser from "body-parser";
 import morgan from "morgan";
+import path from "path";
 let app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(morgan('dev'));
 
+// ----------------------------------------------------------------------------
+// Compile sass and serve assets in public folder
+// ----------------------------------------------------------------------------
 import compileSass from 'express-compile-sass';
-import path from "path";
 let root = path.join(process.cwd(), "public");
 app.use(compileSass({
   root,

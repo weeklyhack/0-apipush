@@ -1,0 +1,53 @@
+@mixin apisection($type: primary) {
+  @extend .panel;
+  @extend .panel-#{$type};
+
+  &--label { @extend .panel-heading; }
+  &--body { @extend .panel-body; }
+}
+
+.api {
+  @extend .container;
+
+  &__about {
+    @include apisection(primary);
+
+    &__name, &__slug, &__desc {
+      @extend .form-control;
+      margin: 0.5em auto;
+      resize: vertical;
+    }
+  }
+
+  &__version {
+    @include apisection(default);
+  }
+
+  // urlgroup and routegroup
+  &__route {
+    &__urlgroup {
+      @extend .input-group;
+    }
+    &__method {
+      @extend .input-group-btn;
+    }
+    &__url {
+      @extend .form-control;
+    }
+
+    &__routegroup__body, &__routegroup__headers {
+      @include make-xs-column(12);
+      @include make-md-column(6);
+      padding-top: 1em;
+      textarea {
+        display: block;
+        width: 100%;
+        resize: vertical;
+        font-size: 1.8rem;
+        font-family: monospace;
+        min-height: 8em;
+      }
+    }
+  }
+
+}

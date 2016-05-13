@@ -1,9 +1,43 @@
 <% include partials/header %>
-<div class="container">
-  <form method="POST">
-    <input type="text" name="name" placeholder="Api Name" />
-    <input type="text" name="slug" placeholder="Api Slug" />
-    <textarea name="desc" placeholder="Api Description"></textarea>
-  </form>
-</div>
+<form method="POST">
+  <div class="api">
+    <h1>My Api</h1>
+
+    <div class="api__about">
+      <div class="api__about--label">Metadata</div>
+
+      <div class="api__about--body">
+        <input class="api__about__name" type="text" name="name" placeholder="Api Name" />
+        <input class="api__about__slug" type="text" name="slug" placeholder="Api Slug" />
+        <textarea class="api__about__desc" name="desc" placeholder="Api Description"></textarea>
+      </div>
+    </div>
+
+    <div class="api__version">
+      <div class="api__about--label">
+        Version
+        <code>v1</code>
+      </div>
+
+      <div class="api__version--body">
+
+        <div class="api__route">
+          <h3>When I go to...</h3>
+          <%- include('partials/urlgroup', {method: "GET", namespace: "api_route"}) %>
+
+          <h3>Then, do this...<h3>
+          <%- include('partials/routegroup', {
+            namespace: "api_proxy",
+            method: "POST",
+            headers: "Abc: def",
+            body: `{"yay": "me"}`,
+          }) %>
+        </div>
+      </div>
+    </div>
+
+    <input type="submit" class="btn btn-success" value="Update Api" />
+
+  </div>
+</form>
 <% include partials/footer %>

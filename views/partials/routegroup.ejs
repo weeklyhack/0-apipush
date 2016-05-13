@@ -1,0 +1,26 @@
+<!--
+The RouteGroup Partial
+Renders a picker to choose a query method, a url, headers, and a body
+-->
+<div class="api__route__routegroup">
+  <%- include('urlgroup', {method, namespace}) %>
+  
+  <div class="api__route__routegroup__headers">
+    <label>
+      Headers
+      <%- include('stachehelper', {
+        tags: {
+          params: "The url parameters in the url",
+          query: "The query parameters in the url",
+          body: "The body contents of the request. If the body is json, it is parsed.",
+        },
+        editor: ".api__route__routegroup__headers textarea",
+      }); %>
+    </label>
+    <textarea name="<%= namespace || '' %>_headers"><%= headers %></textarea>
+  </div>
+  <div class="api__route__routegroup__body">
+    <label>Body</label>
+    <textarea name="<%= namespace || '' %>_body"><%= body %></textarea>
+  </div>
+</div>

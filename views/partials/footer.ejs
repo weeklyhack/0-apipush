@@ -1,0 +1,27 @@
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script>
+function selectRange(e, start, end) {
+  if (!e) return;
+  else if (e.setSelectionRange) { e.focus(); e.setSelectionRange(start, end); } /* WebKit */ 
+  else if (e.createTextRange) { var range = e.createTextRange(); range.collapse(true); range.moveEnd('character', end); range.moveStart('character', start); range.select(); } /* IE */
+  else if (e.selectionStart) { e.selectionStart = start; e.selectionEnd = end; }
+};
+
+function insertStacheInEditor(editor, stache) {
+  var ed = $(editor);
+  if (ed.length) {
+
+    // add the stache
+    var caretPos = ed[0].selectionStart;
+    var textAreaTxt = ed.val();
+    ed.val(
+      textAreaTxt.substring(0, caretPos) + "{{" + stache + ".property}}" + textAreaTxt.substring(caretPos)
+    );
+
+    // select ".property"
+    var start = caretPos + stache.length + 2 + 1; // 2 for open stashe, 1 for dot
+    selectRange(ed[0], start, start + ".property".length - 1);
+  }
+}
+</script>

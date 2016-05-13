@@ -1,0 +1,21 @@
+<!--
+The StacheHelper Partial
+This helper provides easy shortcuts to add mutache tags to headers or body of a
+request.
+-->
+
+<div class="input-group-btn">
+  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Dynamic Sections <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <%- Object.keys(tags).map(tag => {
+      return `<li>
+        <a href="#" onClick="insertStacheInEditor('${editor}', '${tag}')">
+          ${tag}
+          <small>${tags[tag]}</small>
+        </a>
+      </li>`;
+    }).join(''); %>
+  </ul>
+</div>
