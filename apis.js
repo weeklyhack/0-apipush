@@ -29,8 +29,10 @@ module.exports = {
                   url: "/devices/:id",
                 },
                 proxy: [{
-                  method: "GET",
+                  method: "POST",
                   url: "http://scooterlabs.com/echo?q={{params.id}}",
+                  headers: "Test: {{params.id}}",
+                  body: "abc",
                 }],
               },
             ],

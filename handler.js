@@ -1,5 +1,7 @@
 "use strict";
 import Api from "./apis";
+import parseHeaders from "./parseHeaders";
+
 import Mustache from "mustache";
 import request from "request";
 import pathToRegexp from "path-to-regexp";
@@ -11,7 +13,7 @@ class VisibleError extends Error {
     super(name);
     this.code = code;
   }
-  get visible() { return true; }
+  visible() { return true; }
   toJSON() {
     return {error: this.message, code: this.code};
   }
@@ -98,6 +100,11 @@ export function handleApiRequest(req, res) {
             Object.assign({}, req, {params})
           );
         }
+
+        // for headers, make sure to split on `\n`s
+        if (item === "headers") {
+          dataRender.headers = parseHeaders(dataRender.headers);
+        }
       }
 
       // make the request
@@ -109,8 +116,8 @@ export function handleApiRequest(req, res) {
 
   // handle errors
   .catch(err => {
-    if (err instanceof VisibleError) {
-      res.status(err.code).json(err.toJSON());
+    if (err instanceof Error && VisibleError.prototype.visible.call(err)) {
+      res.status(err.code).json(VisibleError.prototype.toJSON.call(err));
     } else {
       throw err;
     }

@@ -3,10 +3,12 @@
 import Promise from "bluebird";
 import express from "express";
 import bodyParser from "body-parser";
+import morgan from "morgan";
 let app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
+app.use(morgan('dev'));
 
 // ----------------------------------------------------------------------------
 // Set up passport
