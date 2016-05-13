@@ -54,6 +54,8 @@ app.post('/login', passport.authenticate('login', {
 app.get("/login", (req, res) => res.render("login"));
 app.get("/", (req, res) => res.render("index"));
 
+app.get("/new", (req, res) => res.render("configapi"));
+
 // ----------------------------------------------------------------------------
 // The api querys
 // ------------------------------------------------------------------------------
