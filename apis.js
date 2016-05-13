@@ -29,6 +29,16 @@ module.exports = {
                   send: [
                     `{"type": "UPDATE", "content": "{{query.value}}"}`,
                   ],
+                  responses: {
+                    success: {
+                      contains: "success",
+                      then: `{"response": true}`,
+                    },
+                    fail: {
+                      contains: "success",
+                      then: `{"response": true}`,
+                    },
+                  },
                 }
                 ],
               },
@@ -53,7 +63,7 @@ module.exports = {
                 proxy: [{
                   via: "http",
                   method: "GET",
-                  url: "http://randomuser.me/api/{{params.uid}}",
+                  url: "http://randomuser.me/api/{{}}",
                 }],
               }
             ],
