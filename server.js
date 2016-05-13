@@ -10,6 +10,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(morgan('dev'));
 
+import compileSass from 'express-compile-sass';
+import path from "path";
+let root = path.join(process.cwd(), "public");
+app.use(compileSass({
+  root,
+  sourceMap: true, // Includes Base64 encoded source maps in output css 
+  sourceComments: true, // Includes source comments in output css 
+  watchFiles: true, // Watches sass files and updates mtime on main files for each change 
+  logToConsole: false, // If true, will log to console.error on errors 
+}));
+app.use(express.static(root));
+
 // ----------------------------------------------------------------------------
 // Set up passport
 // ----------------------------------------------------------------------------
