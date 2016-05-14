@@ -43,7 +43,7 @@ export function getMatchingVersionAndRoute(req, res, api) {
       return i.accept.method === req.method && re.exec(baseUrl);
     });
 
-    if (route && route.proxy.length) {
+    if (route && route.proxy) {
       // get url params, and remove the first match (of the whole thing)
       let unpairedParams = re.exec(baseUrl).slice(1);
       let params = _.zipObject(
@@ -88,11 +88,13 @@ export function handleApiRequest(req, res) {
     let stashRoot = Object.assign({}, req, {params});
 
     // send the data to the client's system
-    switch (route.proxy[0].via) {
+    switch (route.proxy.via) {
       case 'http':
-        return handleHttpQuery(req, res, stashRoot, route.proxy[0]);
+        return handleHttpQuery(req, res, stashRoot, route.proxy);
       case 'websockets':
-        return handleWebsocketsQuery(req, res, stashRoot, route.proxy[0]);
+        return handleWebsocketsQuery(req, res, stashRoot, route.proxy);
+      case 'static':
+        res.status(200).send(route.proxy.data);
       default:
         throw new VisibleError(500, `No such handler for request: ${route.proxy[0].via}`);
     }

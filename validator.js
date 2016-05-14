@@ -80,9 +80,8 @@ let schema = {
                     },
                   },
                   proxy: {
-                    type: "array",
-                    items: {
-                      type: "object",
+                    type: "object",
+                    properties: {
                       oneOf: [proxyHttpSchema, proxyWebsocketsSchema],
                     },
                   },
