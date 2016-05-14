@@ -11,7 +11,7 @@ export default function handleStaticQuery(req, res, stashApi, routeData) {
 
       // if headers were specified, send them too
       if (routeData.headers) {
-        let headers = parseHeaders(routeData.headers);
+        let headers = parseHeaders(routeData.headers, stashApi);
         Object.keys(headers).forEach(header => {
           res.header(header, headers[header]);
         });

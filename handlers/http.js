@@ -13,7 +13,7 @@ export default function handleHttpQuery(req, res, stashApi, routeData) {
 
     // for headers, make sure to split on `\n`s
     if (item === "headers") {
-      dataRender.headers = parseHeaders(dataRender.headers);
+      dataRender.headers = parseHeaders(dataRender.headers, stashApi);
     }
   }
 

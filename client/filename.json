@@ -11,7 +11,7 @@
         "proxy": {
           "via": "static",
           "body": "hello world!",
-          "headers": "Custom-header: oh yea"
+          "headers": "Custom-header: {{query.abc}}"
         }
       }]
     }
