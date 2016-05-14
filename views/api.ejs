@@ -1,0 +1,32 @@
+<% include partials/header %>
+<form method="POST">
+  <div class="api">
+    <h1>My Api</h1>
+
+    <div class="api__about">
+      <div class="api__about--label">Metadata</div>
+
+      <div class="api__about--body">
+        <input class="api__about__name" type="text" name="name" placeholder="Api Name" />
+        <input class="api__about__slug" type="text" name="slug" placeholder="Api Slug" />
+        <textarea class="api__about__desc" name="desc" placeholder="Api Description"></textarea>
+      </div>
+    </div>
+
+    <div class="api__version">
+      <div class="api__about--label">
+        Versions
+      </div>
+      <div class="api__about--body">
+        <% Object.keys(data.versions).forEach(function(version) { %>
+          <li>
+            <a href="/edit/<%= data.slug %>/<%= version %>/">
+              <%= version %>
+            </a>
+          </li>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</form>
+<% include partials/footer %>

@@ -38,7 +38,14 @@ passport.use('login', require("./auth")()); // Auth strategy
 // ----------------------------------------------------------------------------
 // Project Files
 // ------------------------------------------------------------------------------
-import {handleApiRequest, getApiInformation, editApi} from "./handler";
+import {
+  handleApiRequest,
+  getApiInformation,
+  
+  editApi,
+  editApiVersion,
+  editApiRoute,
+} from "./handler";
 
 // ----------------------------------------------------------------------------
 // Serialize and Deserialize users
@@ -71,6 +78,8 @@ app.get("/", (req, res) => res.render("index"));
 
 app.get("/new", (req, res) => res.render("configapi"));
 app.get("/edit/:slug", editApi);
+app.get("/edit/:slug/:version", editApiVersion);
+app.get("/edit/:slug/:version/:route", editApiRoute);
 
 // ----------------------------------------------------------------------------
 // The api querys

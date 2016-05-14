@@ -9,7 +9,7 @@ Renders a picker to choose a query method, a url, headers, and a body
     <label>
       Headers
       <%- include('stachehelper', {
-        editor: `#version-${version} #url-${urlindex} .api__route__routegroup__headers textarea`,
+        editor: `.api__route__routegroup__headers textarea`,
       }); %>
     </label>
     <textarea name="<%= namespace || '' %>_headers"><%= headers %></textarea>
@@ -18,7 +18,7 @@ Renders a picker to choose a query method, a url, headers, and a body
     <label>
       Body
       <%- include('stachehelper', {
-        editor: `#version-${version} #url-${urlindex} .api__route__routegroup__headers textarea`,
+        editor: `.api__route__routegroup__body textarea`,
       }); %>
     </label>
     <textarea name="<%= namespace || '' %>_body"><%= body %></textarea>

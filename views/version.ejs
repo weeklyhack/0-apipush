@@ -1,0 +1,22 @@
+<% include partials/header %>
+<form method="POST">
+  <div class="api">
+    <h1>Version <%= version %></h1>
+
+    <div class="api__version">
+      <div class="api__about--label">Routes</div>
+
+      <div class="api__version--body">
+        <% routes.forEach(function(route, ct) { %>
+          <li>
+            <a href="/edit/<%= data.slug %>/<%= version %>/<%= route.id %>">
+              <%= route.accept.method %>
+              <%= route.accept.url %>
+            </a>
+          </li>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</form>
+<% include partials/footer %>

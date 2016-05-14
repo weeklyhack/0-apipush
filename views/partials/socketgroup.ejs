@@ -1,0 +1,43 @@
+<!--
+The SocketGroup Partial
+Renders a picker to choose a url, messages to send, and messages to receive
+-->
+<div class="api__route__routegroup">
+  <input type="text" class="form-control" placeholder="Connect to socket" name="<%= namespace || '' %>_url" />
+  <br/>
+  
+  <div class="send">
+    <label>
+      Initially, send...
+      <%- include('stachehelper', {
+        editor: `.api__route__routegroup__headers textarea`,
+      }); %>
+    </label>
+
+    <% send.forEach(content => { %>
+      <textarea name="<%= namespace || '' %>_send"><%= send %></textarea>
+    <% }); %>
+  </div>
+  <hr />
+
+  <div class="receive">
+    <label>When we receive a message containing the below, respond with...</label>
+
+    <% Object.keys(responses).forEach(response => { %>
+      <div class="receive__response" id="<%= response %>">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Response contains"
+          value="<%= responses[response].contains %>"
+          name="<%= namespace || '' %>_<%= response %>_response_contains"
+        /> 
+
+        <%- include('stachehelper', {
+          editor: `.receive__response#${response} textarea`,
+        }); %>
+        <textarea name="<%= namespace || '' %>_<%= response %>_response_then"><%= responses[response].then %></textarea>
+      </div>
+    <% }); %>
+  </div>
+</div>

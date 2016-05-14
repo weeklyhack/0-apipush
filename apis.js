@@ -14,6 +14,7 @@ module.exports = {
           v1: {
             routes: [
               {
+                id: "beb18f57-217d-481f-a127-ead22feeca41",
                 accept: {
                   method: "GET",
                   url: "/devices",
@@ -35,14 +36,15 @@ module.exports = {
                       then: `{"response": true}`,
                     },
                     fail: {
-                      contains: "success",
-                      then: `{"response": true}`,
+                      contains: "fail",
+                      then: `{"response": false}`,
                     },
                   },
                 }
                 ],
               },
               {
+                id: "de9147c5-6290-4fec-9cbb-9edcf3235669",
                 accept: {
                   method: "GET",
                   url: "/devices/:id",
@@ -56,6 +58,7 @@ module.exports = {
                 }],
               },
               {
+                id: "21e17c70-5e57-4acb-a19e-eb9a807f8290",
                 accept: {
                   method: "GET",
                   url: "/user/:uid",

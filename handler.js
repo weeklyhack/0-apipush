@@ -20,6 +20,14 @@ function asFullUrl(version, path) {
   return `/api/${version}/${stripInitialSlash(path)}`;
 }
 
+function showErrors(res, err) {
+  if (err instanceof Error && VisibleError.prototype.visible.call(err)) {
+    res.status(err.code).json(VisibleError.prototype.toJSON.call(err));
+  } else {
+    throw err;
+  }
+}
+
 // find matching version and route when given req, res, and the selected api
 export function getMatchingVersionAndRoute(req, res, api) {
   let version;
@@ -91,13 +99,7 @@ export function handleApiRequest(req, res) {
   })
 
   // handle errors
-  .catch(err => {
-    if (err instanceof Error && VisibleError.prototype.visible.call(err)) {
-      res.status(err.code).json(VisibleError.prototype.toJSON.call(err));
-    } else {
-      throw err;
-    }
-  });
+  .catch(showErrors.bind(this, res));
 }
 
 // return the information for an api
@@ -117,9 +119,37 @@ export function editApi(req, res) {
   Api.findAll()
   .then(findMatchingApi.bind(this, req.params.slug))
   .then(data => {
-    res.render("configapi", {
+    res.render("api", {
       user: req.user,
       data,
     });
   })
+  .catch(showErrors.bind(this, res));
+}
+export function editApiVersion(req, res) {
+  Api.findAll()
+  .then(findMatchingApi.bind(this, req.params.slug))
+  .then(data => {
+    res.render("version", {
+      user: req.user,
+      version: req.params.version,
+      routes: data.versions[req.params.version].routes,
+      data,
+    });
+  })
+  .catch(showErrors.bind(this, res));
+}
+export function editApiRoute(req, res) {
+  Api.findAll()
+  .then(findMatchingApi.bind(this, req.params.slug))
+  .then(data => {
+    res.render("route", {
+      user: req.user,
+      version: req.params.version,
+      route: data.versions[req.params.version]
+                   .routes.find(i => i.id === req.params.route),
+      data,
+    });
+  })
+  .catch(showErrors.bind(this, res));
 }
