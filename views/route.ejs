@@ -29,8 +29,8 @@
                   namespace: `api_route`,
                   method: proxy.method,
                   url: proxy.url,
-                  headers: "Abc: def",
-                  body: `{"yay": "me"}`,
+                  headers: proxy.headers,
+                  body: proxy.body,
                   version,
                 });
               } else if (proxy.via === "websockets") {
@@ -46,6 +46,7 @@
               } %>
               <%- view %>
             <% }); %>
+            <br />
             <input type="submit" class="btn btn-success" value="Save" />
         </form>
       </div>

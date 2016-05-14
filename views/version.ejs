@@ -15,6 +15,15 @@
             </a>
           </li>
         <% }); %>
+
+        <form method="POST" action="/edit/<%= data.slug %>/<%= version %>">
+          <input type="hidden" name="type" value="http" />
+          <input type="submit" value="New HTTP Route" />
+        </form>
+        <form method="POST" action="/edit/<%= data.slug %>/<%= version %>">
+          <input type="hidden" name="type" value="websockets" />
+          <input type="submit" value="New Websockets Route" />
+        </form>
       </div>
     </div>
   </div>

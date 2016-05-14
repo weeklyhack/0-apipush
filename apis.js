@@ -1,6 +1,8 @@
 "use strict";
 const Promise = require("bluebird");
 import VisibleError from "./visibleError";
+import {v4 as uuid} from "uuid";
+import randomWords from "random-words";
 
 let data = [
   {
@@ -77,14 +79,22 @@ let data = [
   },
 ];
 
+function getSlugVersion(slug, version) {
+  let slugData = data.find(i => i.slug === slug);
+  if (slugData) {
+    return slugData.versions[version];
+  } else {
+    return false;
+  }
+}
+
 module.exports = {
   findAll() {
     return Promise.resolve(data);
   },
   updateRouteProxy(slug, version, route, index, proxy) {
-    let slugData = data.find(i => i.slug === slug);
-    if (slugData) {
-      let versionData = slugData.versions[version];
+    let versionData = getSlugVersion(slug, version);
+    if (versionData) {
       let routeData = versionData.routes.find(i => i.id === route);
 
       // update route data
@@ -94,4 +104,57 @@ module.exports = {
       return Promise.reject(`No such slug ${slug}`);
     }
   },
+  newRoute(slug, version, type="http") {
+    let versionData = getSlugVersion(slug, version);
+    if (versionData) {
+      let route;
+      if (type === "http") {
+        route = {
+          via: "http",
+          id: uuid(),
+          method: "GET",
+          url: "http://google.com",
+          headers: "",
+          body: "",
+        };
+      } else if (type === "websockets") {
+        route = {
+          id: uuid(),
+          via: "websockets",
+          url: "ws://echo.websocket.org",
+          send: [``],
+          responses: {},
+        };
+      }
+
+      let id = uuid();
+      versionData.routes.push({
+        id,
+        accept: {
+          method: "GET",
+          url: `/${randomWords(1)[0]}`,
+        },
+        proxy: [route],
+      });
+
+      return Promise.resolve(id);
+    }
+  },
+  newRouteResponse(slug, version, route, responseName) {
+    let versionData = getSlugVersion(slug, version);
+    if (versionData) {
+      versionData = versionData.map(i => {
+        if (i.id === route) {
+          let data = {};
+          data[responseName] = { contains: "", then: "" };
+          return Object.assign(i, {
+            responses: Object.assign(i.responses, data),
+          });
+        } else {
+          return versionData;
+        }
+      });
+      return Promise.resolve(id);
+    }
+  }
 };

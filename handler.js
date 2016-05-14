@@ -156,7 +156,6 @@ export function editApiRoute(req, res) {
 
 
 export function postApiRoute(req, res) {
-
   // partition the data into sections
   let data = _(Object.keys(req.body)).map(key => {
     let parts = key.split('_').slice(1);
@@ -200,4 +199,15 @@ export function postApiRoute(req, res) {
     req.flash("status", "Successfully updated server.");
     res.redirect(req.url);
   }).catch(showErrors.bind(this, res));
+}
+
+export function createNewRoute(req, res) {
+  Api.newRoute(req.params.slug, req.params.version, req.body.type)
+  .then(id => res.redirect(`/edit/${req.params.slug}/${req.params.version}/${id}`))
+  .catch(showErrors.bind(this, res));
+}
+export function createNewRouteResponse(req, res) {
+  Api.newRouteResponse(req.params.slug, req.params.version, req.params.route)
+  .then(id => res.redirect(`/edit/${req.params.slug}/${req.params.version}/${req.params.route}`))
+  .catch(showErrors.bind(this, res));
 }
