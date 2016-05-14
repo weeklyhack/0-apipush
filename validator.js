@@ -17,8 +17,9 @@ let proxyHttpSchema = {
     method: {type: {enum: httpMethodTypes}},
     headers: {type: "string"},
     body: {type: "string"},
+    id: {type: "string"},
   },
-  required: ["via", "url", "method", "headers", "body"],
+  required: ["id", "via", "url", "method", "headers", "body"],
 };
 
 let proxyWebsocketsSchema = {
@@ -26,6 +27,7 @@ let proxyWebsocketsSchema = {
   properties: {
     via: {type: {enum: ["websockets"]}},
     url: { type: "string", format: "url" },
+    id: {type: "string"},
     send: {
       type: "array",
       items: { type: "string" },
@@ -44,7 +46,7 @@ let proxyWebsocketsSchema = {
       },
     },
   },
-  required: ["via", "url", "send", "responses"],
+  required: ["id", "via", "url", "send", "responses"],
 };
 
 let schema = {
@@ -58,6 +60,7 @@ let schema = {
     slug: {type: "string"},
     desc: {type: "string"},
     icon: {type: "string"},
+    secret: {type: "string"},
     versions: {
       type: "object",
       patternProperties: {
@@ -84,7 +87,7 @@ let schema = {
                     },
                   },
                 },
-                required: ["accept", "proxy"],
+                required: ["id", "accept", "proxy"],
               },
             },
             required: ["routes"],
@@ -93,7 +96,7 @@ let schema = {
       },
     },
   },
-  required: ["name", "slug"],
+  required: ["name", "slug", "id", "secret"],
 };
 
 export default function validate(instance) {

@@ -126,6 +126,9 @@ module.exports = {
           }
         }
 
+        // also, add a secret that allows modifications later
+        api.secret = uuid();
+
         let validation = validate(api);
         if (validation.errors.length === 0) {
           data.push(api);
