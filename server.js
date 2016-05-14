@@ -51,14 +51,7 @@ app.use((req, res, next) => {
 import {
   handleApiRequest,
   getApiInformation,
-  
-  editApi,
-  editApiVersion,
-  editApiRoute,
-
-  postApiRoute,
-
-  createNewRoute,
+  createApi,
 } from "./handler";
 
 // ----------------------------------------------------------------------------
@@ -90,17 +83,12 @@ app.post('/login', passport.authenticate('login', {
 app.get("/login", (req, res) => res.render("login"));
 app.get("/", (req, res) => res.render("index"));
 
-app.get("/new", (req, res) => res.render("configapi"));
-app.get("/edit/:slug", editApi);
-app.get("/edit/:slug/:version", editApiVersion);
-
-app.route("/edit/:slug/:version/:route").get(editApiRoute).post(postApiRoute);
-app.post("/edit/:slug/:version", createNewRoute);
-
 // ----------------------------------------------------------------------------
 // The api querys
 // ------------------------------------------------------------------------------
 app.all("/api/:version/*", handleApiRequest);
-app.all("/api/_meta(.json)?", getApiInformation);
+app.get("/api/_meta(.json)?", getApiInformation);
+
+app.post("/api/_create(.json)?", createApi);
 
 app.listen(process.env.PORT || 8000);

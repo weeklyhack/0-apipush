@@ -3,6 +3,8 @@ const Promise = require("bluebird");
 import VisibleError from "./visibleError";
 import {v4 as uuid} from "uuid";
 import randomWords from "random-words";
+import validate from "./validator";
+import _ from "lodash";
 
 let data = [
   {
@@ -71,6 +73,8 @@ let data = [
               via: "http",
               method: "GET",
               url: "http://randomuser.me/api/{{query.user}}",
+              body: "",
+              headers: "",
             }],
           }
         ],
@@ -92,69 +96,47 @@ module.exports = {
   findAll() {
     return Promise.resolve(data);
   },
-  updateRouteProxy(slug, version, route, index, proxy) {
-    let versionData = getSlugVersion(slug, version);
-    if (versionData) {
-      let routeData = versionData.routes.find(i => i.id === route);
-
-      // update route data
-      routeData.proxy[index] = proxy;
-      return Promise.resolve(routeData);
-    } else {
-      return Promise.reject(`No such slug ${slug}`);
-    }
-  },
-  newRoute(slug, version, type="http") {
-    let versionData = getSlugVersion(slug, version);
-    if (versionData) {
-      let route;
-      if (type === "http") {
-        route = {
-          via: "http",
-          id: uuid(),
-          method: "GET",
-          url: "http://google.com",
-          headers: "",
-          body: "",
-        };
-      } else if (type === "websockets") {
-        route = {
-          id: uuid(),
-          via: "websockets",
-          url: "ws://echo.websocket.org",
-          send: [``],
-          responses: {},
-        };
-      }
-
-      let id = uuid();
-      versionData.routes.push({
-        id,
-        accept: {
-          method: "GET",
-          url: `/${randomWords(1)[0]}`,
-        },
-        proxy: [route],
-      });
-
-      return Promise.resolve(id);
-    }
-  },
-  newRouteResponse(slug, version, route, responseName) {
-    let versionData = getSlugVersion(slug, version);
-    if (versionData) {
-      versionData = versionData.map(i => {
-        if (i.id === route) {
-          let data = {};
-          data[responseName] = { contains: "", then: "" };
-          return Object.assign(i, {
-            responses: Object.assign(i.responses, data),
-          });
-        } else {
-          return versionData;
+  create(api) {
+    return new Promise((resolve, reject) => {
+      if (api && _.isPlainObject(api)) {
+        // no slug? make one up
+        if (typeof api.slug === "undefined") {
+          api.slug = randomWords(process.env.SLUG_WORD_LENGTH || 3).join("-");
         }
-      });
-      return Promise.resolve(id);
-    }
-  }
+
+        // add ids to api
+        api.id = uuid();
+        if (api && api.versions && _.isPlainObject(api.versions)) {
+          for (let version in api.versions) {
+            if (api.versions.hasOwnProperty(version)) {
+              let v = api.versions[version];
+              if (v && v.routes && Array.isArray(v.routes)) {
+                v.routes.forEach(route => {
+                  if (route) {
+                    route.id = uuid();
+                    if (route.proxy && Array.isArray(route.proxy)) {
+                      route.proxy.forEach(proxy => {
+                        proxy.id = uuid();
+                      });
+                    }
+                  }
+                });
+              }
+            }
+          }
+        }
+
+        let validation = validate(api);
+        if (validation.errors.length === 0) {
+          data.push(api);
+          return resolve(api);
+        } else {
+          throw new VisibleError(400, `Schema Validation Errors: ${validation.errors.toString()}`);
+        }
+      } else {
+        throw new VisibleError(400, "Api isn't defined.");
+      }
+    });
+  },
 };
+
