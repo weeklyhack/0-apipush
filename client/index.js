@@ -2,6 +2,7 @@
 const request = require("request-promise");
 const argv = require('minimist')(process.argv.slice(2));
 const fs = require("fs");
+const dotfile = require("dotfun")(".pushsecret");
 
 const baseUrl = process.env.SERVER_URL || "http://127.0.0.1:8000";
 
@@ -22,6 +23,9 @@ if (argv._.length) {
       options: argv,
     },
   }).then(data => {
+    // write the secret locally 
+    dotfile.set(data.api.slug, {secret: data.api.secret});
+
     log(`Provisioned new api ${data.api.slug}!`);
     log(`Check out your new api at ${data.routes.root}`);
     log(`(and, get metadata information at ${data.routes.meta})`);

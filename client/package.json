@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.3.5",
+    "dotfun": "^0.9.1",
     "minimist": "^1.2.0",
     "request-promise": "^3.0.0"
   }
