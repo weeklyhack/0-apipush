@@ -1,0 +1,32 @@
+{
+  "name": "My Cool API",
+  "versions": {
+    "v1": {
+      "routes": [{
+        "accept": {
+          "method": "GET",
+          "url": "/data"
+        },
+        "proxy": [
+          {
+            "via": "websockets",
+            "url": "ws://echo.websocket.org",
+            "send": [
+              "{\"type\": \"UPDATE\", \"content\": \"{{query.value}}\"}"
+            ],
+            "responses": {
+              "success": {
+                "contains": "success",
+                "then": "{\"response\": true}"
+              },
+              "fail": {
+                "contains": "fail",
+                "then": "{\"response\": false}"
+              }
+            }
+          }
+        ]
+      }]
+    }
+  }
+}
