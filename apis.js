@@ -63,7 +63,7 @@ module.exports = {
                 proxy: [{
                   via: "http",
                   method: "GET",
-                  url: "http://randomuser.me/api/{{}}",
+                  url: "http://randomuser.me/api/{{query.user}}",
                 }],
               }
             ],

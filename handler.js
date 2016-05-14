@@ -111,3 +111,15 @@ export function getApiInformation(req, res) {
     });
   })
 }
+
+// return the information for an api
+export function editApi(req, res) {
+  Api.findAll()
+  .then(findMatchingApi.bind(this, req.params.slug))
+  .then(data => {
+    res.render("configapi", {
+      user: req.user,
+      data,
+    });
+  })
+}

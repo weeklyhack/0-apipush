@@ -23,5 +23,14 @@ ie, GET http://example.com
       <li><a href >DELETE</a></li>
     </ul>
   </div>
-  <input type="text" class="api__route__url" name="<%= namespace || '' %>_url" placeholder="http://example.com/item/:id" />
+  <% if (typeof prefix !== "undefined") { %>
+    <div class="input-group-addon"><%= prefix %></div>
+  <% } %>
+  <input
+    type="text"
+    class="api__route__url"
+    name="<%= namespace || '' %>_url"
+    placeholder="http://example.com/item/:id"
+    value="<%= typeof url !== 'undefined' ? url : '' %>"
+  />
 </div>

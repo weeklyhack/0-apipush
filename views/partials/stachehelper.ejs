@@ -3,10 +3,17 @@ The StacheHelper Partial
 This helper provides easy shortcuts to add mutache tags to headers or body of a
 request.
 -->
+<% var tags = tags || {
+  params: "The url parameters in the url",
+  query: "The query parameters in the url",
+  body: "The body contents of the request. If the body is json, it is pre-parsed.",
+};
+%>
 
 <div class="input-group-btn">
   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Dynamic Sections <span class="caret"></span>
+    Add Stache
+    <span class="caret"></span>
   </button>
   <ul class="dropdown-menu">
     <%- Object.keys(tags).map(tag => {
