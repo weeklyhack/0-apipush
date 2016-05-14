@@ -2,6 +2,7 @@
 import Api from "./apis";
 import handleHttpQuery from "./handlers/http";
 import handleWebsocketsQuery from "./handlers/websockets";
+import handleStaticQuery from "./handlers/static";
 import VisibleError from "./visibleError";
 
 import pathToRegexp from "path-to-regexp";
@@ -22,7 +23,7 @@ function asFullUrl(version, path) {
 
 function showErrors(res, err) {
   if (err instanceof Error && VisibleError.prototype.visible.call(err)) {
-    res.status(err.code).json(VisibleError.prototype.toJSON.call(err));
+    res.status(err.code || 500).json(VisibleError.prototype.toJSON.call(err));
   } else {
     throw err;
   }
@@ -94,7 +95,7 @@ export function handleApiRequest(req, res) {
       case 'websockets':
         return handleWebsocketsQuery(req, res, stashRoot, route.proxy);
       case 'static':
-        res.status(200).send(route.proxy.data);
+        return handleStaticQuery(req, res, stashRoot, route.proxy);
       default:
         throw new VisibleError(500, `No such handler for request: ${route.proxy[0].via}`);
     }

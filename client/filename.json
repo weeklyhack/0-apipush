@@ -1,5 +1,6 @@
 {
   "name": "My Cool API",
+  "slug": "abc",
   "versions": {
     "v1": {
       "routes": [{
@@ -8,21 +9,9 @@
           "url": "/data"
         },
         "proxy": {
-          "via": "websockets",
-          "url": "ws://echo.websocket.org",
-          "send": [
-            "{\"type\": \"UPDATE\", \"content\": \"{{query.value}}\"}"
-          ],
-          "responses": {
-            "success": {
-              "contains": "success",
-              "then": "{\"response\": true}"
-            },
-            "fail": {
-              "contains": "fail",
-              "then": "{\"response\": false}"
-            }
-          }
+          "via": "static",
+          "body": "hello world!",
+          "headers": "Custom-header: oh yea"
         }
       }]
     }

@@ -2,15 +2,7 @@ import VisibleError from "../visibleError";
 
 import Mustache from "mustache";
 import Websocket from "ws";
-import isJSON from "is-json";
-
-// helper to send a response
-function sendData(res, data) {
-  if (isJSON(data)) {
-    res.header("content-type", "application/json");
-  }
-  res.send(data);
-}
+import sendData from "./sendData";
 
 // Cases:
 // Without responses
