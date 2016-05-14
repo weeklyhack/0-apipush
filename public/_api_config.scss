@@ -6,6 +6,15 @@
   &--body { @extend .panel-body; }
 }
 
+@mixin format-textarea {
+  display: block;
+  width: 100%;
+  resize: vertical;
+  font-size: 1.8rem;
+  font-family: monospace;
+  min-height: 8em;
+}
+
 .api {
   @extend .container;
 
@@ -40,14 +49,34 @@
       @include make-md-column(6);
       padding-top: 1em;
       textarea {
-        display: block;
-        width: 100%;
-        resize: vertical;
-        font-size: 1.8rem;
-        font-family: monospace;
-        min-height: 8em;
+        @include format-textarea;
       }
     }
   }
 
+}
+
+.send, .receive {
+
+  &__response {
+    margin-top: 0.5em;
+  }
+
+  &__label {
+    @include make-xs-column(12);
+    @include make-md-column(10);
+    display: block;
+    margin-bottom: 0.5em;
+  }
+  .stache {
+    @include make-xs-column(12);
+    @include make-md-column(2);
+    button {
+      width: 100%;
+    }
+  }
+
+  textarea {
+    @include format-textarea;
+  }
 }
