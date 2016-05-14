@@ -153,3 +153,50 @@ export function editApiRoute(req, res) {
   })
   .catch(showErrors.bind(this, res));
 }
+
+
+export function postApiRoute(req, res) {
+
+  // partition the data into sections
+  let data = _(Object.keys(req.body)).map(key => {
+    let parts = key.split('_').slice(1);
+    if (parts.length && parts[0] === "route") { // a proxy response
+      return [
+        parts[1], // the key prefix
+        parts.slice(1).join('_'), // the rest of the key
+        req.body[key], // the value
+        parts.length > 2 && parts[2] === "response", // is this a proxy response?
+      ];
+    } else {
+      return ["_raw", key, req.body[key], false];
+    }
+  }).groupBy(i => i[0]).map(v => {
+    if (v.length) {
+      return _.fromPairs([
+        [ "value", v[0][0] ],
+        [ "isRoute", v[0][3] ],
+        ...v.map(i => i.slice(1)),
+      ]);
+    } else {
+      return {};
+    }
+  }).groupBy(i => i.value).value();
+
+  let proxy = {
+    id: data._raw[0].api_id,
+    via: data._raw[0].api_via,
+    url: data.url[0].url,
+    send: data.send.map(i => i.send),
+    responses: _(data).filter(i => i[0].isRoute)
+                   .map(i => [i[0].value, {
+                     contains: i[0][`${i[0].value}_response_contains`],
+                     then: i[0][`${i[0].value}_response_then`],
+                   }])
+                   .fromPairs().value(),
+  };
+
+  Api.updateRouteProxy(req.params.slug, req.params.version, req.params.route, req.body.index, proxy)
+  .then(resp => {
+    res.redirect(req.url);
+  }).catch(showErrors.bind(this, res));
+}

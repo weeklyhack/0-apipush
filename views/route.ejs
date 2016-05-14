@@ -1,50 +1,53 @@
 <% include partials/header %>
-<form method="POST">
-  <div class="api">
-    <h1>Edit Route</h1>
+<div class="api">
+  <h1>Edit Route</h1>
 
-    <div class="api__version" id="version-<%= version %>">
-      <div class="api__about--label">Edit Route</div>
+  <div class="api__version" id="version-<%= version %>">
+    <div class="api__about--label">Edit Route</div>
 
-      <div class="api__version--body">
-        <div class="api__route">
-          <h3>When I go to...</h3>
-          <%- include('partials/urlgroup', {
-            method: route.accept.method,
-            url: route.accept.url,
-            namespace: "api_route",
-            prefix: `/api/${version}`,
-          }) %>
+    <div class="api__version--body">
+      <div class="api__route">
+        <h3>When I go to...</h3>
+        <%- include('partials/urlgroup', {
+          method: route.accept.method,
+          url: route.accept.url,
+          namespace: "api_route",
+          prefix: `/api/${version}`,
+        }) %>
 
-          <h3>Then, do this...<h3>
-          <% route.proxy.forEach(function(proxy) { %>
-            <% if (proxy.via === "http") {
-              view = include('partials/routegroup', {
-                namespace: "",
-                method: proxy.method,
-                url: proxy.url,
-                headers: "Abc: def",
-                body: `{"yay": "me"}`,
-                version,
-              });
-            } else if (proxy.via === "websockets") {
-              view = include('partials/socketgroup', {
-                namespace: "",
-                url: proxy.url,
-                version,
-                send: proxy.send,
-                responses: proxy.responses,
-              });
-            } else {
-              view = "No proxy connections."
-            } %>
-            <%- view %>
-          <% }); %>
-        </div>
+        <h3>Then, do this...<h3>
+          <form method="POST">
+            <% route.proxy.forEach(function(proxy, ct) { %>
+              <input type="hidden" name="api_id" value="<%= proxy.id %>" />
+              <input type="hidden" name="api_via" value="<%= proxy.via %>" />
+              <input type="hidden" name="index" value="<%= ct %>" />
+              <% if (proxy.via === "http") {
+                view = include('partials/routegroup', {
+                  namespace: `api_route`,
+                  method: proxy.method,
+                  url: proxy.url,
+                  headers: "Abc: def",
+                  body: `{"yay": "me"}`,
+                  version,
+                });
+              } else if (proxy.via === "websockets") {
+                view = include('partials/socketgroup', {
+                  namespace: `api_route`,
+                  url: proxy.url,
+                  version,
+                  send: proxy.send,
+                  responses: proxy.responses,
+                });
+              } else {
+                view = "No proxy connections."
+              } %>
+              <%- view %>
+            <% }); %>
+            <input type="submit" class="btn btn-success" value="Save" />
+        </form>
       </div>
     </div>
-
-    <input type="submit" class="btn btn-success" value="Save" />
   </div>
-</form>
+
+</div>
 <% include partials/footer %>

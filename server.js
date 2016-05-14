@@ -45,6 +45,8 @@ import {
   editApi,
   editApiVersion,
   editApiRoute,
+
+  postApiRoute,
 } from "./handler";
 
 // ----------------------------------------------------------------------------
@@ -79,7 +81,7 @@ app.get("/", (req, res) => res.render("index"));
 app.get("/new", (req, res) => res.render("configapi"));
 app.get("/edit/:slug", editApi);
 app.get("/edit/:slug/:version", editApiVersion);
-app.get("/edit/:slug/:version/:route", editApiRoute);
+app.route("/edit/:slug/:version/:route").get(editApiRoute).post(postApiRoute);
 
 // ----------------------------------------------------------------------------
 // The api querys

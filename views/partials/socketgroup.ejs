@@ -3,7 +3,13 @@ The SocketGroup Partial
 Renders a picker to choose a url, messages to send, and messages to receive
 -->
 <div class="api__route__routegroup">
-  <input type="text" class="form-control" placeholder="Connect to socket" name="<%= namespace || '' %>_url" />
+  <input
+    type="text"
+    class="form-control"
+    placeholder="Connect to socket"
+    name="<%= namespace || '' %>_url"
+    value="<%= url %>"
+  />
   <br/>
   
   <div class="send">
