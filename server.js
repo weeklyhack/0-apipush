@@ -3,8 +3,10 @@
 import Promise from "bluebird";
 import express from "express";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import path from "path";
+import expressFlash from "express-flash";
 let app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
@@ -34,6 +36,14 @@ app.use(expressSession({secret: 'mySecretKey'}));
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use('login', require("./auth")()); // Auth strategy
+app.use(cookieParser('keyboard cat'));
+app.use(expressFlash());
+
+// Add flash stuff
+app.use((req, res, next) => {
+  res.locals.flash_status = req.flash("status");
+  next();
+});
 
 // ----------------------------------------------------------------------------
 // Project Files

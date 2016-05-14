@@ -197,6 +197,7 @@ export function postApiRoute(req, res) {
 
   Api.updateRouteProxy(req.params.slug, req.params.version, req.params.route, req.body.index, proxy)
   .then(resp => {
+    req.flash("status", "Successfully updated server.");
     res.redirect(req.url);
   }).catch(showErrors.bind(this, res));
 }

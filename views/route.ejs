@@ -1,6 +1,9 @@
 <% include partials/header %>
 <div class="api">
   <h1>Edit Route</h1>
+  <% if (flash_status.length > 0) { %>
+    <div class="alert alert-success"><%= flash_status %></div>
+  <% } %>
 
   <div class="api__version" id="version-<%= version %>">
     <div class="api__about--label">Edit Route</div>
