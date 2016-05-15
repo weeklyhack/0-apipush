@@ -2,6 +2,7 @@ import VisibleError from "../visibleError";
 
 import Handlebars from "handlebars";
 import Websocket from "ws";
+import isJSON from "is-json";
 import {default as sendData, sendResponseIfApplicable} from "./sendData";
 
 // Cases:
@@ -36,10 +37,16 @@ export default function handleWebsocketsQuery(req, res, stashApi, routeData) {
     ws.on('message', (data) => {
       if (dataRender.responses) {
         if (!requestSent) {
+          // parse the json data, if the data is json
+          let parsedData = data;
+          if (isJSON(data)) {
+            parsedData = JSON.parse(data)
+          }
+
           // assemble the stash data for the http request
           let websocketsStashApi = Object.assign({}, stashApi, {
             proxy: {
-              data,
+              data: parsedData,
             },
           });
 
