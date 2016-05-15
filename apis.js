@@ -136,14 +136,17 @@ function findWithSlug(slug) {
 
 function create(api, user) {
   if (api && _.isPlainObject(api)) {
-    // no slug? make one up
-    if (typeof api.slug === "undefined") {
-      api.slug = randomWords(process.env.SLUG_WORD_LENGTH || 3).join("-");
-    }
-
     // does an api already exist with this slug?
     return findWithSlug(api.slug)
     .then(match => {
+      // no slug? make one up
+      if (typeof api.slug === "undefined") {
+        if (match) {
+          api.slug = match.slug;
+        } else {
+          api.slug = randomWords(process.env.SLUG_WORD_LENGTH || 3).join("-");
+        }
+      }
       let isUpdate = match && user.id === match.createdBy;
 
       // if the api is being updated or a new one is being created

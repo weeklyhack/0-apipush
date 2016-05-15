@@ -2,7 +2,6 @@
 const request = require("request-promise");
 const argv = require('minimist')(process.argv.slice(2));
 const fs = require("fs");
-const inquirer = require("inquirer-async").promptAsync;
 
 const baseUrl = process.env.SERVER_URL || "http://127.0.0.1:8000";
 
@@ -11,9 +10,14 @@ import chalk from 'chalk';
 import {getLoginCredentials, saveLoginCredentials} from './lib/auth';
 import printHelpfulError from './lib/errors';
 import log from './lib/log';
+import createNewApi from './lib/newapi';
 
-// read the api file
-if (argv._.length) {
+if (argv.init) {
+  createNewApi(argv.init).catch(err => {
+    throw err;
+  });
+} else if (argv._.length) {
+  // push the specified api
   let authCredentials;
   console.log(chalk.cyan(chalk.bold("Welcome!")));
 
