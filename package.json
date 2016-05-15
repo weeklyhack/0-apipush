@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "mocha --compilers js:sinon-as-promised",
+    "test": "mocha test --compilers js:babel-register,js:sinon-as-promised",
     "start": "nodemon server.js --exec babel-node --presets es2015"
   },
   "author": "",

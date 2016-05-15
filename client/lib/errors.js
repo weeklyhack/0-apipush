@@ -31,7 +31,7 @@ export default function logError(err) {
 
       // then, log it out
       console.error("|", chalk.red(error.error), "|");
-      console.error(chalk.red(finalErrorExplaination));
+      console.error(chalk.red(finalErrorExplaination || ''));
     } else {
       console.error(statusCode, error);
     }
