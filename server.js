@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import path from "path";
+import basicAuth from "basic-auth";
 let app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
@@ -63,6 +64,28 @@ function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) return next();
   res.redirect('/');
 }
+
+import Users from './users';
+function useBasicAuth(req, res, next) {
+  function error() {
+    res.status(401).send({error: "Please provide valid authorization over basic auth.", code: 401});
+  }
+
+  let auth = basicAuth(req);
+  if (auth && auth.name && auth.pass) {
+    Users.getByEmailPassword(auth.name, auth.pass)
+    .then(user => {
+      if (user) {
+        req.user = user;
+        next();
+      } else {
+        error();
+      }
+    });
+  } else {
+    error();
+  }
+}
  
 // ----------------------------------------------------------------------------
 // Login user
@@ -80,6 +103,6 @@ app.get("/", (req, res) => res.render("index"));
 // ------------------------------------------------------------------------------
 app.all("/api/:version/*", handleApiRequest);
 app.get("/api/_meta(.json)?", getApiInformation);
-app.post("/api/_create(.json)?", createApi);
+app.post("/api/_create(.json)?", useBasicAuth, createApi);
 
 app.listen(process.env.PORT || 8000);
