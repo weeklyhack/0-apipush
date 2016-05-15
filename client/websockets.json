@@ -1,0 +1,27 @@
+{
+  "name": "My Api",
+  "slug": "abc",
+  "versions": {
+    "v1": {
+      "routes": [
+        {
+          "accept": {
+            "method": "GET",
+            "url": "/"
+          },
+          "proxy": {
+            "via": "websockets",
+            "url": "ws://echo.websocket.org",
+            "send": ["{\"abc\": 1}"],
+            "responses": {
+              "success": {
+                "contains": "abc",
+                "then": "abcdef"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

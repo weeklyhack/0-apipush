@@ -1,0 +1,27 @@
+{
+  "name": "My Api",
+  "slug": "abc",
+  "versions": {
+    "v1": {
+      "routes": [
+        {
+          "accept": {
+            "method": "GET",
+            "url": "/"
+          },
+          "proxy": {
+            "via": "http",
+            "method": "GET",
+            "url": "https://www.adafruit.com/testwifi/",
+            "responses": {
+              "success": {
+                "contains": "",
+                "then": "{\"success\": true, \"time\": \"{{proxy.body}}\"}"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

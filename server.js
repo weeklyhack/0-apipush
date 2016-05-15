@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import path from "path";
+import Handlebars from "handlebars";
 let app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
@@ -47,6 +48,13 @@ import {
   
   useBasicAuth,
 } from "./handler";
+
+// ----------------------------------------------------------------------------
+// Handlebars helpers
+// ----------------------------------------------------------------------------
+Handlebars.registerHelper('json', function(context) {
+  return JSON.stringify(context);
+});
 
 // ----------------------------------------------------------------------------
 // Serialize and Deserialize users

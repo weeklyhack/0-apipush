@@ -1,8 +1,8 @@
 import VisibleError from "../visibleError";
 
-import Mustache from "mustache";
+import Handlebars from "handlebars";
 import Websocket from "ws";
-import sendData from "./sendData";
+import {default as sendData, sendResponseIfApplicable} from "./sendData";
 
 // Cases:
 // Without responses
@@ -17,7 +17,7 @@ import sendData from "./sendData";
 export default function handleWebsocketsQuery(req, res, stashApi, routeData) {
   return new Promise((resolve, reject) => {
     let dataRender = Object.assign({}, routeData);
-    let sendMessages = dataRender.send.map(body => Mustache.render(body, stashApi));
+    let sendMessages = dataRender.send.map(body => Handlebars.compile(body)(stashApi));
     let requestSent = false;
 
     // create websocket and send data
@@ -35,20 +35,11 @@ export default function handleWebsocketsQuery(req, res, stashApi, routeData) {
 
     ws.on('message', (data) => {
       if (dataRender.responses) {
-        for (let response in dataRender.responses) {
-          if (
-            !requestSent &&
-            dataRender.responses.hasOwnProperty(response) &&
-            data.toString().indexOf(dataRender.responses[response].contains) >= 0
-          ) {
-            // The message was found, so render and send
-            let rendered = Mustache.render(dataRender.responses[response].then, stashApi);
-            console.info("Proxying inbound websocket message", data);
-            clearTimeout(requestTimeout);
+        if (!requestSent) {
+          return sendResponseIfApplicable(res, dataRender.responses, data, stashApi).then(() => {
             requestSent = true;
-            sendData(res, rendered)
-            resolve();
-          }
+            clearTimeout(requestTimeout);
+          });
         }
         console.info("Skipping inbound websocket message", data, requestSent ? "(already fulfilled request)" : "(didn't match filters)");
       } else {

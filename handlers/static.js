@@ -1,4 +1,4 @@
-import Mustache from "mustache";
+import Handlebars from "handlebars";
 import Promise from "bluebird";
 
 import sendData from "./sendData";
@@ -7,7 +7,7 @@ import parseHeaders from "../parseHeaders";
 export default function handleStaticQuery(req, res, stashApi, routeData) {
   return new Promise((resolve, reject) => {
     if (routeData.body) {
-      let dataRender = Mustache.render(routeData.body, stashApi);
+      let dataRender = Handlebars.compile(routeData.body)(stashApi);
 
       // if headers were specified, send them too
       if (routeData.headers) {

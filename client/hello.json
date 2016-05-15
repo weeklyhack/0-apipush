@@ -1,0 +1,29 @@
+{
+  "name": "My Api",
+  "slug": "abc",
+  "versions": {
+    "v1": {
+      "routes": [
+        {
+          "accept": {
+            "method": "GET",
+            "url": "/"
+          },
+          "proxy": {
+            "via": "websockets",
+            "url": "ws://echo.websocket.org",
+            "send": [
+              "{\"type\": \"PING\"}"
+            ],
+            "responses": {
+              "success": {
+                "contains": "PING",
+                "then": "{ \"success\": true, \"response\": {{{json body}}} }"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

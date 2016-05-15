@@ -9,6 +9,20 @@ var v = new Validator();
 
 let httpMethodTypes = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"];
 
+let responsesSchema = {
+  type: "object",
+  patternProperties: {
+    "^[a-zA-Z0-9_]+$": {
+      type: "object",
+      properties: {
+        contains: {type: "string"},
+        then: {type: "string"},
+      },
+      required: ["contains", "then"],
+    },
+  },
+};
+
 let proxyHttpSchema = {
   id: "HTTPSchema",
   type: "object",
@@ -18,8 +32,9 @@ let proxyHttpSchema = {
     method: {type: {enum: httpMethodTypes}},
     headers: {type: "string"},
     body: {type: "string"},
+    responses: responsesSchema,
   },
-  required: ["via", "url", "method", "headers", "body"],
+  required: ["via", "url", "method"],
 };
 
 let proxyStaticSchema = {
@@ -43,19 +58,7 @@ let proxyWebsocketsSchema = {
       type: "array",
       items: { type: "string" },
     },
-    responses: {
-      type: "object",
-      patternProperties: {
-        "^[a-zA-Z0-9_]+$": {
-          type: "object",
-          properties: {
-            contains: {type: "string"},
-            then: {type: "string"},
-          },
-          required: ["contains", "then"],
-        },
-      },
-    },
+    responses: responsesSchema,
   },
   required: ["via", "url", "send", "responses"],
 };
