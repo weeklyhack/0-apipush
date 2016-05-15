@@ -16,7 +16,6 @@
     "ejs": "^2.4.1",
     "express": "^4.13.4",
     "express-compile-sass": "^3.0.4",
-    "express-flash": "0.0.2",
     "express-session": "^1.13.0",
     "is-json": "^2.0.0",
     "jsonschema": "^1.1.0",

@@ -75,7 +75,7 @@ let schema = {
     versions: {
       type: "object",
       patternProperties: {
-        "^[a-zA-Z0-9_]+$": {
+        "^[^_][a-zA-Z0-9]+$": {
           type: "object",
           properties: {
             routes: {

@@ -78,6 +78,14 @@ export function throwAwayBadSlug(slug, api) {
 // The full api request handler!!!
 // ------------------------------------------------------------------------------
 export function handleApiRequest(req, res) {
+  if (req.params.version.startsWith('_')) {
+    res.status(500).send({
+      code: 500,
+      error: "Versions that start with an underscore aren't permitted."
+    });
+    return;
+  }
+
   // get the api we specified
   Api.findWithSlug(req.query.slug)
   .then(throwAwayBadSlug.bind(this, req.query.slug))
