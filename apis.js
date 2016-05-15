@@ -90,54 +90,104 @@ function getSlugVersion(slug, version) {
   }
 }
 
-module.exports = {
-  findAll() {
-    return Promise.resolve(data);
-  },
-  create(api) {
-    return new Promise((resolve, reject) => {
-      if (api && _.isPlainObject(api)) {
-        // no slug? make one up
-        if (typeof api.slug === "undefined") {
-          api.slug = randomWords(process.env.SLUG_WORD_LENGTH || 3).join("-");
-        }
-
-        // add ids to api
-        api.id = uuid();
-        if (api && api.versions && _.isPlainObject(api.versions)) {
-          for (let version in api.versions) {
-            if (api.versions.hasOwnProperty(version)) {
-              let v = api.versions[version];
-              if (v && v.routes && Array.isArray(v.routes)) {
-                v.routes.forEach(route => {
-                  if (route) {
-                    route.id = uuid();
-                    if (route.proxy && Array.isArray(route.proxy)) {
-                      route.proxy.forEach(proxy => {
-                        proxy.id = uuid();
-                      });
-                    }
-                  }
-                });
+// assign each api and each route an id. Also, give the api a secret.
+function injectIds(api) {
+  if (api) {
+    if (api.versions && _.isPlainObject(api.versions)) {
+      for (let version in api.versions) {
+        if (api.versions.hasOwnProperty(version)) {
+          let v = api.versions[version];
+          if (v && v.routes && Array.isArray(v.routes)) {
+            v.routes.forEach(route => {
+              if (route) {
+                route.id = uuid();
+                if (route.proxy && Array.isArray(route.proxy)) {
+                  route.proxy.forEach(proxy => {
+                    proxy.id = uuid();
+                  });
+                }
               }
-            }
+            });
           }
         }
+      }
+    }
 
-        // also, add a secret that allows modifications later
-        api.secret = uuid();
+    // give the api an id, too
+    api.id = uuid();
 
+    // also, add a secret that allows modifications later
+    api.secret = uuid();
+    return api;
+  } else {
+    return null;
+  }
+}
+
+
+
+function findAll() {
+  return Promise.resolve(data);
+}
+
+function findWithSlug(slug) {
+  return Promise.resolve(data.find(i => i.slug === slug));
+}
+
+function create(api) {
+  if (api && _.isPlainObject(api)) {
+    // no slug? make one up
+    if (typeof api.slug === "undefined") {
+      api.slug = randomWords(process.env.SLUG_WORD_LENGTH || 3).join("-");
+    }
+
+    // does an api already exist with this slug?
+    return findWithSlug(api.slug)
+    .then(match => {
+      if (match) {
+        throw new VisibleError(403, `The slug ${api.slug} is in use.`);
+      } else {
+        // add ids to api
+        api = injectIds(api);
+
+        // validate the api to make sure it matches our expectations
         let validation = validate(api);
         if (validation.errors.length === 0) {
           data.push(api);
-          return resolve(api);
+          return api;
+        } else {
+          throw new VisibleError(400, `Schema Validation Errors: ${validation.errors.toString()}`);
+        }
+      }
+    });
+  } else {
+    throw new VisibleError(400, "Api isn't defined.");
+  }
+};
+
+// TODO: finish this up
+function edit(api) {
+  if (api && _.isPlainObject(api)) {
+    // does an api already exist with this slug?
+    return findWithSlug(api.slug)
+    .then(match => {
+      if (match) {
+        // add ids to api
+        api = injectIds(api);
+
+        // validate the api to make sure it matches our expectations
+        let validation = validate(api);
+        if (validation.errors.length === 0) {
+          // TODO: update the api
+          return api;
         } else {
           throw new VisibleError(400, `Schema Validation Errors: ${validation.errors.toString()}`);
         }
       } else {
-        throw new VisibleError(400, "Api isn't defined.");
+        throw new VisibleError(403, `The slug ${api.slug} hasn't been used - create an api instead.`);
       }
     });
-  },
-};
+  }
+}
 
+export default {findAll, findWithSlug, create};

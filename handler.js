@@ -66,8 +66,7 @@ export function getMatchingVersionAndRoute(req, res, api) {
 }
 
 // Make sure the returned api is valid
-export function findMatchingApi(slug, apis) {
-  let api = apis.find(api => api.slug === slug);
+export function throwAwayBadSlug(slug, api) {
   if (api) {
     return api;
   } else {
@@ -80,8 +79,8 @@ export function findMatchingApi(slug, apis) {
 // ------------------------------------------------------------------------------
 export function handleApiRequest(req, res) {
   // get the api we specified
-  Api.findAll()
-  .then(findMatchingApi.bind(this, req.query.slug))
+  Api.findWithSlug(req.query.slug)
+  .then(throwAwayBadSlug.bind(this, req.query.slug))
 
   // get the route that matches the given request
   .then(getMatchingVersionAndRoute.bind(this, req, res))
@@ -107,8 +106,8 @@ export function handleApiRequest(req, res) {
 
 // return the information for an api
 export function getApiInformation(req, res) {
-  Api.findAll()
-  .then(findMatchingApi.bind(this, req.query.slug))
+  Api.findWithSlug(req.query.slug)
+  .then(throwAwayBadSlug.bind(this, req.query.slug))
   .then(({name, slug, desc, versions}) => {
     res.json({
       name, slug, desc,
