@@ -169,29 +169,4 @@ function create(api, user) {
   }
 };
 
-// TODO: finish this up
-function edit(api) {
-  if (api && _.isPlainObject(api)) {
-    // does an api already exist with this slug?
-    return findWithSlug(api.slug)
-    .then(match => {
-      if (match) {
-        // add ids to api
-        api = injectIds(api);
-
-        // validate the api to make sure it matches our expectations
-        let validation = validate(api);
-        if (validation.errors.length === 0) {
-          // TODO: update the api
-          return api;
-        } else {
-          throw new VisibleError(400, `Schema Validation Errors: ${validation.errors.toString()}`);
-        }
-      } else {
-        throw new VisibleError(403, `The slug ${api.slug} hasn't been used - create an api instead.`);
-      }
-    });
-  }
-}
-
 export default {findAll, findWithSlug, create};
