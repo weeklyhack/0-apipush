@@ -36,7 +36,14 @@ export default function handleWebsocketsQuery(req, res, stashApi, routeData) {
     ws.on('message', (data) => {
       if (dataRender.responses) {
         if (!requestSent) {
-          return sendResponseIfApplicable(res, dataRender.responses, data, stashApi).then(() => {
+          // assemble the stash data for the http request
+          let websocketsStashApi = Object.assign({}, stashApi, {
+            proxy: {
+              data,
+            },
+          });
+
+          return sendResponseIfApplicable(res, dataRender.responses, data, websocketsStashApi).then(() => {
             requestSent = true;
             clearTimeout(requestTimeout);
           });

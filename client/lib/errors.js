@@ -16,9 +16,8 @@ const possibleErrors = [
 
 export default function logError(err) {
   if (err instanceof Error) {
-    let {statusCode, error} = err;
-    if (error && error.error) {
-
+    if (err && err.error && err.error.error) {
+      let {statusCode, error} = err;
       // look through all of the error regexes to find a matching one.
       let finalErrorExplaination = possibleErrors.reduce((acc, [regex, more]) => {
         if (acc) {
@@ -33,7 +32,7 @@ export default function logError(err) {
       console.error("|", chalk.red(error.error), "|");
       console.error(chalk.red(finalErrorExplaination || ''));
     } else {
-      console.error(statusCode, error);
+      console.error(err);
     }
   } else {
     console.error(err);

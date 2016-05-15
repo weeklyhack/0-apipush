@@ -6,6 +6,7 @@ const fs = require("fs");
 const baseUrl = process.env.SERVER_URL || "http://127.0.0.1:8000";
 
 import chalk from 'chalk';
+import isJSON from 'is-json';
 
 import {getLoginCredentials, saveLoginCredentials} from './lib/auth';
 import printHelpfulError from './lib/errors';
@@ -24,22 +25,25 @@ if (argv.init) {
   // get login credentials
   getLoginCredentials()
   .then(auth => {
-    const apiData = JSON.parse(fs.readFileSync(argv._[0]).toString());
-    log(`Loaded api docs from ${argv._[0]}`);
-    authCredentials = auth;
+    let apiContents = fs.readFileSync(argv._[0]).toString();
+    if (apiContents && isJSON(apiContents)) {
+      let apiData = JSON.parse(apiContents);
+      log(`Loaded api docs from ${argv._[0]}`);
+      authCredentials = auth;
 
-    return request({
-      method: "POST",
-      url: `${baseUrl}/api/_push.json`,
-      json: {
-        data: apiData,
-        options: argv,
-      },
-      auth: {
-        username: auth.email,
-        password: auth.password,
-      },
-    });
+      return request({
+        method: "POST",
+        url: `${baseUrl}/api/_push.json`,
+        json: {
+          data: apiData,
+          options: argv,
+        },
+        auth: {
+          username: auth.email,
+          password: auth.password,
+        },
+      });
+    }
   }).then(data => {
     if (data.account) {
       data.account.newAccount && log(`Created new account: ${data.account.publishedBy}`);

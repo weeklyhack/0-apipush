@@ -1,0 +1,19 @@
+{
+  "name": "My Api",
+  "versions": {
+    "v1": {
+      "routes": [
+        {
+          "accept": {
+            "method": "GET",
+            "url": "/"
+          },
+          "proxy": {
+            "via": "static",
+            "body": "Hello {{query.name}}"
+          }
+        }
+      ]
+    }
+  }
+}
