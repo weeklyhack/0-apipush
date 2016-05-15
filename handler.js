@@ -4,6 +4,8 @@ import handleHttpQuery from "./handlers/http";
 import handleWebsocketsQuery from "./handlers/websockets";
 import handleStaticQuery from "./handlers/static";
 import VisibleError from "./visibleError";
+import basicAuth from "basic-auth";
+import Users from './users';
 
 import pathToRegexp from "path-to-regexp";
 import _ from "lodash";
@@ -127,7 +129,7 @@ export function getApiInformation(req, res) {
 
 export function createApi(req, res) {
   if (req.body.options && req.body.data) {
-    return Api.create(req.body.data)
+    return Api.create(req.body.data, req.user)
     .then(api => {
       res.send({
         status: 200,
@@ -135,6 +137,10 @@ export function createApi(req, res) {
         routes: {
           root: `http://${api.slug}.example.com/api/`,
           meta: `http://${api.slug}.example.com/api/_meta.json`,
+        },
+        account: {
+          publishedBy: req.user.email,
+          newAccount: req.user._newuser,
         },
       });
     })
@@ -144,3 +150,32 @@ export function createApi(req, res) {
        .send({error: "Invalid request format. Please include a data and options key."});
   }
 }
+
+export function useBasicAuth(req, res, next) {
+  function error() {
+    res.status(401).send({error: "Please provide valid authorization over basic auth.", code: 401});
+  }
+
+  let auth = basicAuth(req);
+  if (auth && auth.name && auth.pass) {
+    return Users.getByEmailPassword(auth.name, auth.pass)
+    .then(user => {
+      if (user) {
+        // an already logged in user
+        req.user = user;
+        next();
+      } else if (auth.name && auth.pass) {
+        // create a new account
+        return Users.createAccount(auth.name, auth.pass)
+        .then(user => {
+          req.user = user;
+        }).then(next)
+      } else {
+        error();
+      }
+    }).catch(showErrors.bind(this, res));
+  } else {
+    error();
+  }
+}
+ 

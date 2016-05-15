@@ -134,7 +134,7 @@ function findWithSlug(slug) {
   return Promise.resolve(data.find(i => i.slug === slug));
 }
 
-function create(api) {
+function create(api, user) {
   if (api && _.isPlainObject(api)) {
     // no slug? make one up
     if (typeof api.slug === "undefined") {
@@ -144,11 +144,13 @@ function create(api) {
     // does an api already exist with this slug?
     return findWithSlug(api.slug)
     .then(match => {
-      if (match) {
-        throw new VisibleError(403, `The slug ${api.slug} is in use.`);
-      } else {
-        // add ids to api
+      let isUpdate = match && user.id === match.createdBy;
+
+      // if the api is being updated or a new one is being created
+      if (isUpdate || !match) {
+        // create the api
         api = injectIds(api);
+        api.createdBy = user.id;
 
         // validate the api to make sure it matches our expectations
         let validation = validate(api);
@@ -158,6 +160,8 @@ function create(api) {
         } else {
           throw new VisibleError(400, `Schema Validation Errors: ${validation.errors.toString()}`);
         }
+      } else {
+        throw new VisibleError(403, `The slug ${api.slug} is in use by another user.`);
       }
     });
   } else {

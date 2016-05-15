@@ -1,9 +1,11 @@
 import Promise from 'bluebird';
 import {promptAsync as inquirer} from 'inquirer-async';
 import dotfun from 'dotfun';
+import log from './log';
 const dotfile = dotfun(".pushsecret");
 
 export function askForLoginCredentialsFromUser(existingCredentials={}) {
+  console.log("Please login or create an account by entering below an email and a password:");
   return inquirer([
     {
       type: "input",
