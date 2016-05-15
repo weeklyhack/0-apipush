@@ -10,6 +10,7 @@ var v = new Validator();
 let httpMethodTypes = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"];
 
 let proxyHttpSchema = {
+  id: "HTTPSchema",
   type: "object",
   properties: {
     via: {type: {enum: ["http"]}},
@@ -17,17 +18,27 @@ let proxyHttpSchema = {
     method: {type: {enum: httpMethodTypes}},
     headers: {type: "string"},
     body: {type: "string"},
-    id: {type: "string"},
   },
-  required: ["id", "via", "url", "method", "headers", "body"],
+  required: ["via", "url", "method", "headers", "body"],
+};
+
+let proxyStaticSchema = {
+  id: "StaticSchema",
+  type: "object",
+  properties: {
+    via: {type: {enum: ["static"]}},
+    headers: {type: "string"},
+    body: {type: "string"},
+  },
+  required: ["via", "body"],
 };
 
 let proxyWebsocketsSchema = {
+  id: "WebsocketsSchema",
   type: "object",
   properties: {
     via: {type: {enum: ["websockets"]}},
     url: { type: "string", format: "url" },
-    id: {type: "string"},
     send: {
       type: "array",
       items: { type: "string" },
@@ -46,7 +57,7 @@ let proxyWebsocketsSchema = {
       },
     },
   },
-  required: ["id", "via", "url", "send", "responses"],
+  required: ["via", "url", "send", "responses"],
 };
 
 let schema = {
@@ -81,9 +92,7 @@ let schema = {
                   },
                   proxy: {
                     type: "object",
-                    properties: {
-                      oneOf: [proxyHttpSchema, proxyWebsocketsSchema],
-                    },
+                    oneOf: [proxyHttpSchema, proxyWebsocketsSchema, proxyStaticSchema],
                   },
                 },
                 required: ["id", "accept", "proxy"],
