@@ -104,7 +104,7 @@ export function handleApiRequest(req, res) {
       case 'static':
         return handleStaticQuery(req, res, stashRoot, route.proxy);
       default:
-        throw new VisibleError(500, `No such handler for request: ${route.proxy[0].via}`);
+        throw new VisibleError(500, `No such handler for request: ${route.proxy.via}`);
     }
   })
 

@@ -23,14 +23,17 @@ if (argv._.length) {
       options: argv,
     },
   }).then(data => {
-    // write the secret locally 
-    dotfile.set(data.api.slug, {secret: data.api.secret});
+    // write the data locally
+    dotfile.set(data.api.slug, {
+      secret: data.api.secret,
+      api: data.api,
+    });
 
     log(`Provisioned new api ${data.api.slug}!`);
     log(`Check out your new api at ${data.routes.root}`);
     log(`(and, get metadata information at ${data.routes.meta})`);
   }).catch(err => {
-    throw err;
+    console.error(err.message);
   });
 } else {
   console.error("Error: specify a api file as an argument.");
