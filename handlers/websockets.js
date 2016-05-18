@@ -40,7 +40,7 @@ export default function handleWebsocketsQuery(req, res, stashApi, routeData) {
           // parse the json data, if the data is json
           let parsedData = data;
           if (isJSON(data)) {
-            parsedData = JSON.parse(data)
+            parsedData = JSON.parse(data);
           }
 
           // assemble the stash data for the http request

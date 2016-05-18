@@ -1,5 +1,6 @@
 import Handlebars from "handlebars";
 import request from "request";
+import isJSON from "is-json";
 
 import parseHeaders from "../parseHeaders";
 import {default as sendData, sendResponseIfApplicable} from "./sendData";
@@ -24,10 +25,16 @@ export default function handleHttpQuery(req, res, stashApi, routeData) {
       if (err) {
         res.json({error: err.toString()});
       } else {
+        // parse the json data, if the data is json
+        let parsedBody = body;
+        if (isJSON(body)) {
+          parsedBody = JSON.parse(body);
+        }
+
         // assemble the stash data for the http request
         let httpStashApi = Object.assign({}, stashApi, {
           proxy: {
-            body,
+            body: parsedBody,
           },
         });
 
