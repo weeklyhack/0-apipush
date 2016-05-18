@@ -5,6 +5,7 @@ import {v4 as uuid} from "uuid";
 import randomWords from "random-words";
 import validate from "./validator";
 import _ from "lodash";
+import mongoose from 'mongoose';
 
 let data = [
   {
@@ -81,6 +82,8 @@ let data = [
   },
 ];
 
+const ApiModel = mongoose.model('Api', { model: Object });
+
 function getSlugVersion(slug, version) {
   let slugData = data.find(i => i.slug === slug);
   if (slugData) {
@@ -127,11 +130,11 @@ function injectIds(api) {
 
 
 function findAll() {
-  return Promise.resolve(data);
+  return ApiModel.find({});
 }
 
 function findWithSlug(slug) {
-  return Promise.resolve(data.find(i => i.slug === slug));
+  return ApiModel.find({model: {slug}});
 }
 
 function create(api, user) {
@@ -159,14 +162,14 @@ function create(api, user) {
         let validation = validate(api);
         if (validation.errors.length === 0) {
           data.push(api);
-          return api;
+          new ApiModel({model: api}).save();
         } else {
           throw new VisibleError(400, `Schema Validation Errors: ${validation.errors.toString()}`);
         }
       } else {
         throw new VisibleError(403, `The slug ${api.slug} is in use by another user.`);
       }
-    });
+    }).then(() => api);
   } else {
     throw new VisibleError(400, "Api isn't defined.");
   }

@@ -14,6 +14,12 @@ app.use(bodyParser.urlencoded());
 app.use(morgan('dev'));
 
 // ----------------------------------------------------------------------------
+// Monsoose setup
+// ----------------------------------------------------------------------------
+import mongoose from 'mongoose';
+mongoose.connect(process.env.MONGO_URI);
+
+// ----------------------------------------------------------------------------
 // Compile sass and serve assets in public folder
 // ----------------------------------------------------------------------------
 import compileSass from 'express-compile-sass';

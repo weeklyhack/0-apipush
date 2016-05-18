@@ -169,7 +169,7 @@ export function useBasicAuth(req, res, next) {
         return Users.createAccount(auth.name, auth.pass)
         .then(user => {
           req.user = user;
-        }).then(next)
+        }).then(next);
       } else {
         error();
       }
