@@ -90,8 +90,8 @@ export function handleApiRequest(req, res) {
   }
 
   // get the api we specified
-  Api.findWithSlug(req.query.slug)
-  .then(throwAwayBadSlug.bind(this, req.query.slug))
+  Api.findWithSlug(req.params.slug)
+  .then(throwAwayBadSlug.bind(this, req.params.slug))
 
   // get the route that matches the given request
   .then(getMatchingVersionAndRoute.bind(this, req, res))
@@ -117,8 +117,8 @@ export function handleApiRequest(req, res) {
 
 // return the information for an api
 export function getApiInformation(req, res) {
-  Api.findWithSlug(req.query.slug)
-  .then(throwAwayBadSlug.bind(this, req.query.slug))
+  Api.findWithSlug(req.params.slug)
+  .then(throwAwayBadSlug.bind(this, req.params.slug))
   .then(({name, slug, desc, versions}) => {
     res.json({
       name, slug, desc,
@@ -136,8 +136,8 @@ export function createApi(req, res) {
         status: 200,
         api,
         routes: {
-          root: `http://${api.slug}.example.com/api/`,
-          meta: `http://${api.slug}.example.com/api/_meta.json`,
+          root: `http://apipush.apps.rgaus.net/${api.slug}/api/`,
+          meta: `http://apipush.apps.rgaus.net/${api.slug}/api/_meta.json`,
         },
         account: {
           publishedBy: req.user.email,

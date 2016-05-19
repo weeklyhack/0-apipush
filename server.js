@@ -93,9 +93,9 @@ app.get("/", (req, res) => res.render("index"));
 // ----------------------------------------------------------------------------
 // The api querys
 // ------------------------------------------------------------------------------
-app.get("/api/_meta(.json)?", getApiInformation);
 app.post("/api/_push(.json)?", useBasicAuth, createApi);
-app.all("/api/:version/*", handleApiRequest);
-app.all("/api/:version", handleApiRequest);
+app.get("/:slug/api/_meta(.json)?", getApiInformation);
+app.all("/:slug/api/:version/*", handleApiRequest);
+app.all("/:slug/api/:version", handleApiRequest);
 
 app.listen(process.env.PORT || 8000);
