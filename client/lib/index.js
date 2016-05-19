@@ -3,7 +3,7 @@ const request = require("request-promise");
 const argv = require('minimist')(process.argv.slice(2));
 const fs = require("fs");
 
-const baseUrl = process.env.SERVER_URL || "http://127.0.0.1:8000";
+const baseUrl = process.env.SERVER_URL || "http://apipush.rgaus.net";
 
 import chalk from 'chalk';
 import isJSON from 'is-json';
@@ -51,7 +51,7 @@ if (argv.init) {
     }
     console.log();
     log(`Api ${chalk.cyan(data.api.slug)} has been provisioned!`);
-    log(`Check out your new api at ${chalk.yellow(data.routes.root)}`);
+    log(`Check out your new api at ${chalk.yellow(data.routes.example || data.routes.root)}`);
     log(`(and, get metadata information at ${chalk.yellow(data.routes.meta)})`);
   }).catch(printHelpfulError);
 } else {

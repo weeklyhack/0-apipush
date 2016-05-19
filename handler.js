@@ -32,6 +32,14 @@ function showErrors(res, err) {
   }
 }
 
+function getSampleApiVersion(api) {
+  if (api.versions) {
+    return Object.keys(api.versions)[0];
+  } else {
+    return "(version here)";
+  }
+}
+
 // find matching version and route when given req, res, and the selected api
 export function getMatchingVersionAndRoute(req, res, api) {
   let version;
@@ -137,6 +145,7 @@ export function createApi(req, res) {
         api,
         routes: {
           root: `http://apipush.apps.rgaus.net/${api.slug}/api/`,
+          example: `http://apipush.apps.rgaus.net/${api.slug}/api/${getSampleApiVersion(api)}`,
           meta: `http://apipush.apps.rgaus.net/${api.slug}/api/_meta.json`,
         },
         account: {
