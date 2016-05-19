@@ -1,0 +1,31 @@
+{
+  "name": "My Api",
+  "slug": "abc",
+  "versions": {
+    "v1": {
+      "routes": [
+        {
+          "accept": {
+            "method": "GET",
+            "url": "/"
+          },
+          "proxy": {
+            "via": "http",
+            "method": "GET",
+            "url": "https://api.ipify.org/",
+            "responses": {
+              "success": {
+                "contains": "",
+                "then": "{ \"working\": true, \"data\": \"{{proxy.body}}\" }"
+              },
+              "fail": {
+                "contains": "fail",
+                "then": "{ \"working\": false, \"data\": \"{{proxy.body}}\" }"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

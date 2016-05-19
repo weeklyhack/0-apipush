@@ -1,6 +1,6 @@
 {
   "name": "My Api",
-  "slug": "websocket-echo",
+  "slug": "abc",
   "versions": {
     "v1": {
       "routes": [
@@ -10,13 +10,13 @@
             "url": "/"
           },
           "proxy": {
-            "via": "websockets",
-            "url": "ws://echo.websocket.org",
-            "send": ["{\"abc\": 1}"],
+            "via": "http",
+            "method": "GET",
+            "url": "https://raw.githubusercontent.com/petkaantonov/bluebird/master/package.json",
             "responses": {
               "success": {
-                "contains": "abc",
-                "then": "response"
+                "contains": "",
+                "then": "{ \"success\": true, \"response\": {{{json proxy.body}}} }"
               }
             }
           }
