@@ -19,8 +19,8 @@ function stripInitialSlash(data) {
 }
 
 // format a url inside of a query as a full url
-function asFullUrl(version, path) {
-  return `/api/${version}/${stripInitialSlash(path)}`;
+function asFullUrl(slug, version, path) {
+  return `/${slug}/api/${version}/${stripInitialSlash(path)}`;
 }
 
 function showErrors(res, err) {
@@ -42,7 +42,7 @@ export function getMatchingVersionAndRoute(req, res, api) {
       // remove all the query variables and other stuff like that
       baseUrl = req._parsedOriginalUrl.pathname;
       // parse the path to look for param variables
-      let fullUrl = asFullUrl(req.params.version, i.accept.url);
+      let fullUrl = asFullUrl(req.params.slug, req.params.version, i.accept.url);
       re = pathToRegexp(fullUrl, keys);
       return i.accept.method === req.method && re.exec(baseUrl);
     });
