@@ -8,10 +8,10 @@ const baseUrl = process.env.SERVER_URL || "http://127.0.0.1:8000";
 import chalk from 'chalk';
 import isJSON from 'is-json';
 
-import {getLoginCredentials, saveLoginCredentials} from './lib/auth';
-import printHelpfulError from './lib/errors';
-import log from './lib/log';
-import createNewApi from './lib/newapi';
+import {getLoginCredentials, saveLoginCredentials} from './auth';
+import printHelpfulError from './errors';
+import log from './log';
+import createNewApi from './newapi';
 
 if (argv.init) {
   createNewApi(argv.init).catch(err => {
