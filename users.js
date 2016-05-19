@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import {v4 as uuid} from 'uuid';
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt-nodejs';
+import bcrypt from 'bcrypt-as-promised';
 import VisibleError from './visibleError';
 
 const UserModel = mongoose.model('User', {
@@ -11,61 +11,52 @@ const UserModel = mongoose.model('User', {
 });
 
 function getByEmailPassword(email, password) {
-  return new Promise((resolve, reject) => {
-    UserModel.findOne({email}, (err, user) => {
-      if (err) {
-        reject(err);
-      } else if (user) {
-        // does the password match?
-        let toHash = `${user.passwordSalt}${password}`;
-        bcrypt.compare(user.passwordHash, toHash, (err, hash) => {
-          if (err) {
-            reject(err);
-          } else if (hash) {
-            resolve(user); // all looks good
-          } else {
-            resolve(null); // passowrd didn't match
-          }
-        })
-      } else {
-        // no user
-        resolve(null);
-      }
-    });
+  let globalUser;
+  UserModel.findOne({email}).then(console.error.bind(console))
+  return UserModel.findOne({email})
+  .then(user => {
+    if (user) {
+      globalUser = user;
+      // does the password match?
+      return bcrypt.compare(`${password}${user.passwordSalt}`, user.passwordHash);
+    } else {
+      return null; // no user
+    }
+  }).then(hashValid => {
+    if (hashValid) {
+      return globalUser;
+    } else {
+      return null;
+    }
   });
 }
 
 function createAccount(email, password) {
+  let globalUser, salt = uuid();
   return getByEmailPassword(email, password)
   .then(user => {
     if (user === null) {
-      let salt = uuid();
+      globalUser = user;
 
       // create the user
-      return new Promise((resolve, reject) => {
-        bcrypt.hash(`${salt}${password}`, "", () => null, (err, hash) => {
-          if (err) {
-            reject(err);
-          } else {
-            new UserModel({
-              email,
-              passwordHash: hash,
-              passwordSalt: salt,
-            }).save(() => {
-              resolve(
-                Object.assign({}, user, {
-                _newuser: true,
-                })
-              );
-            })
-          }
-        });
-      });
+      return bcrypt.hash(`${password}${salt}`, 10);
     } else {
       throw new VisibleError(401, "This email is already associated with an account.");
     }
-  })
+  }).then(hash => {
+    if (hash) {
+      return new UserModel({
+        email,
+        passwordHash: hash,
+        passwordSalt: salt,
+      }).save()
+      .then(() => {
+        return Object.assign({}, globalUser, { _newuser: true });
+      });
+    } else {
+      return false;
+    }
+  });
 }
-// createAccount("ryan@rgaus.net", "key")
 
 export default {getByEmailPassword, createAccount};

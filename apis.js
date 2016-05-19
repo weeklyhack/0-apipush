@@ -134,7 +134,11 @@ function findAll() {
 }
 
 function findWithSlug(slug) {
-  return ApiModel.find({model: {slug}});
+  if (slug) {
+    return ApiModel.find({model: {slug}});
+  } else {
+    return Promise.resolve(null);
+  }
 }
 
 function create(api, user) {
@@ -162,7 +166,7 @@ function create(api, user) {
         let validation = validate(api);
         if (validation.errors.length === 0) {
           data.push(api);
-          new ApiModel({model: api}).save();
+          return new ApiModel({model: api}).save();
         } else {
           throw new VisibleError(400, `Schema Validation Errors: ${validation.errors.toString()}`);
         }

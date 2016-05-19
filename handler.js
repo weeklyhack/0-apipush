@@ -25,6 +25,7 @@ function asFullUrl(version, path) {
 
 function showErrors(res, err) {
   if (err instanceof Error && VisibleError.prototype.visible.call(err)) {
+    console.error(err.stack);
     res.status(err.code || 500).json(VisibleError.prototype.toJSON.call(err));
   } else {
     throw err;
