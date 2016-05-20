@@ -88,13 +88,13 @@ function create(api, user) {
           api.slug = randomWords(process.env.SLUG_WORD_LENGTH || 3).join("-");
         }
       }
-      let isUpdate = match && user.id === match.createdBy;
+      let isUpdate = match && user._id === match.createdBy;
 
       // if the api is being updated or a new one is being created
       if (isUpdate || !match) {
         // create the api
         api = injectIds(api);
-        api.createdBy = user.id;
+        api.createdBy = user._id;
 
         // validate the api to make sure it matches our expectations
         let validation = validate(api);
