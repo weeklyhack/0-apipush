@@ -1,6 +1,5 @@
 {
-  "name": "My Api",
-  "slug": "http",
+  "name": "The title of Google is....",
   "versions": {
     "v1": {
       "routes": [
@@ -15,8 +14,12 @@
             "url": "http://google.com",
             "responses": {
               "success": {
+                "contains": "Google",
+                "then": "{\"success\": true, \"title\": \"{{jquery_text 'title'}}\"}"
+              },
+              "failure": {
                 "contains": "",
-                "then": "{\"success\": true, \"time\": \"{{jquery_text 'title'}}\"}"
+                "then": "{\"success\": false, \"title\": null}"
               }
             }
           }
@@ -25,3 +28,4 @@
     }
   }
 }
+
