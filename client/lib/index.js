@@ -8,7 +8,7 @@ const baseUrl = process.env.SERVER_URL || "http://apipush.apps.rgaus.net";
 import chalk from 'chalk';
 import isJSON from 'is-json';
 
-import {getLoginCredentials, saveLoginCredentials, logOut} from './auth';
+import {askForLoginCredentialsFromUser, saveLoginCredentials, logOut} from './auth';
 import printHelpfulError from './errors';
 import log from './log';
 import createNewApi from './newapi';
@@ -25,7 +25,7 @@ if (argv.init) {
   console.log(chalk.cyan(chalk.bold("Welcome!")));
 
   // get login credentials
-  getLoginCredentials()
+  askForLoginCredentialsFromUser()
   .then(auth => {
     let apiContents = fs.readFileSync(argv._[0]).toString();
     if (apiContents && isJSON(apiContents)) {
