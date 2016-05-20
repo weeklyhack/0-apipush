@@ -1,6 +1,5 @@
 {
-  "name": "My Api",
-  "slug": "abc",
+  "name": "Get Bluebird's package.json",
   "versions": {
     "v1": {
       "routes": [

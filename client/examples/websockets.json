@@ -1,6 +1,5 @@
 {
-  "name": "My Api",
-  "slug": "websocket-echo",
+  "name": "Websocket echo example",
   "versions": {
     "v1": {
       "routes": [

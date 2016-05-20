@@ -1,6 +1,5 @@
 {
-  "name": "My Api",
-  "slug": "abc",
+  "name": "Websockets send json and receive it",
   "versions": {
     "v1": {
       "routes": [

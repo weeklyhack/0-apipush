@@ -1,6 +1,5 @@
 {
-  "name": "My Api",
-  "slug": "http",
+  "name": "HTTP Adafruit Example",
   "versions": {
     "v1": {
       "routes": [

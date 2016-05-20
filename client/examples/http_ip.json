@@ -1,6 +1,5 @@
 {
-  "name": "My Api",
-  "slug": "abc",
+  "name": "Get my IP",
   "versions": {
     "v1": {
       "routes": [
