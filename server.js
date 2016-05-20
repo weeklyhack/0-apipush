@@ -88,7 +88,7 @@ app.post('/login', passport.authenticate('login', {
   // failureFlash: true ,
 }));
 app.get("/login", (req, res) => res.render("login"));
-app.get("/", (req, res) => res.render("index"));
+app.get("/", (req, res) => res.redirect("https://github.com/1egoman/0-apipush"));
 
 // ----------------------------------------------------------------------------
 // The api querys

@@ -1,6 +1,6 @@
 {
   "name": "My Api",
-  "slug": "abc",
+  "slug": "http",
   "versions": {
     "v1": {
       "routes": [

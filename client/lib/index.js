@@ -3,7 +3,7 @@ const request = require("request-promise");
 const argv = require('minimist')(process.argv.slice(2));
 const fs = require("fs");
 
-const baseUrl = process.env.SERVER_URL || "http://apipush.rgaus.net";
+const baseUrl = process.env.SERVER_URL || "http://apipush.rgaus.net:8001";
 
 import chalk from 'chalk';
 import isJSON from 'is-json';
