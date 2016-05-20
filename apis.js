@@ -88,7 +88,7 @@ function create(api, user) {
           api.slug = randomWords(process.env.SLUG_WORD_LENGTH || 3).join("-");
         }
       }
-      let isUpdate = match && user._id === match.createdBy;
+      let isUpdate = match && user._id.toString() === match.createdBy.toString();
 
       // if the api is being updated or a new one is being created
       if (isUpdate || !match) {
@@ -100,14 +100,19 @@ function create(api, user) {
         let validation = validate(api);
         if (validation.errors.length === 0) {
           // upsert the model
-          return ApiModel.update({slug: api.slug}, {model: api, slug: api.slug}, {upsert: true});
+          return ApiModel.update({slug: api.slug}, {
+            model: api,
+            slug: api.slug,
+          }, {upsert: true});
         } else {
           throw new VisibleError(400, `Schema Validation Errors: ${validation.errors.toString()}`);
         }
       } else {
         throw new VisibleError(403, `The slug ${api.slug} is in use by another user.`);
       }
-    }).then(() => api);
+    }).then(() => {
+      return {api};
+    });
   } else {
     throw new VisibleError(400, "Api isn't defined.");
   }

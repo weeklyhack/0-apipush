@@ -139,14 +139,15 @@ export function getApiInformation(req, res) {
 export function createApi(req, res) {
   if (req.body.options && req.body.data) {
     return Api.create(req.body.data, req.user)
-    .then(api => {
+    .then(data => {
       res.send({
         status: 200,
-        api,
+        api: data.api,
+        version: data.apiVersion,
         routes: {
-          root: `http://apipush.apps.rgaus.net/${api.slug}/api/`,
-          example: `http://apipush.apps.rgaus.net/${api.slug}/api/${getSampleApiVersion(api)}`,
-          meta: `http://apipush.apps.rgaus.net/${api.slug}/api/_meta.json`,
+          root: `http://apipush.apps.rgaus.net/${data.api.slug}/api/`,
+          example: `http://apipush.apps.rgaus.net/${data.api.slug}/api/${getSampleApiVersion(data.api)}`,
+          meta: `http://apipush.apps.rgaus.net/${data.api.slug}/api/_meta.json`,
         },
         account: {
           publishedBy: req.user.email,
