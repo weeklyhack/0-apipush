@@ -1,6 +1,7 @@
 import Handlebars from "handlebars";
 import request from "request";
 import isJSON from "is-json";
+import isXML from "is-xml";
 
 import parseHeaders from "../parseHeaders";
 import {default as sendData, sendResponseIfApplicable} from "./sendData";
@@ -29,6 +30,13 @@ export default function handleHttpQuery(req, res, stashApi, routeData) {
         let parsedBody = body;
         if (isJSON(body)) {
           parsedBody = JSON.parse(body);
+
+        // label xml data ax xml for later
+        } else if (isXML(body)) {
+          parsedBody = {
+            _ishtml: true,
+            data: body,
+          };
         }
 
         // assemble the stash data for the http request

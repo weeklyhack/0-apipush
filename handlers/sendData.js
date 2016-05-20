@@ -1,5 +1,6 @@
 import isJSON from "is-json";
 import Handlebars from "handlebars";
+import cheerio from "cheerio";
 
 // helper to send a response
 export default function sendData(res, data) {
@@ -17,6 +18,21 @@ export function sendResponseIfApplicable(res, responses, data, stashApi) {
         responses.hasOwnProperty(response) &&
         data.toString().indexOf(test.contains) >= 0
       ) {
+
+        // jquery helper for xml
+        if (stashApi.proxy.body._ishtml) {
+          let jQuery = cheerio.load(stashApi.proxy.body.data);
+
+          // register a jquery helper to fetch data from inside of xml, and get
+          // the contents of an imput
+          Handlebars.registerHelper('jquery_text', function(context) {
+            return jQuery(context).text().trim();
+          });
+          Handlebars.registerHelper('jquery_val', function(context) {
+            return jQuery(context).val().trim();
+          });
+        }
+
         // The message was found, so render and send
         let rendered = Handlebars.compile(test.then)(stashApi);
         console.info("Proxying inbound message");
