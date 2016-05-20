@@ -97,6 +97,50 @@ the title. The `jquery_text` helper gets the text of the passed css selector.
   }
 }
 ```
+An example of an actual API
+---
+This api returns voting data for monroe county, a county in upstate new york. It
+scrapes the voting page to get the data and returns it in nicely-formatted
+json. Give this a try: `http://apipush.apps.rgaus.net/monroe/api/v1?number=43&street=Roslyn%20St&zip=14619`.
+```json
+{
+  "name": "Monroe County Voting API",
+  "versions": {
+    "v1": {
+      "routes": [
+        {
+          "accept": {
+            "method": "GET",
+            "url": "/"
+          },
+          "proxy": {
+            "via": "http",
+            "method": "POST",
+            "url": "http://www.monroecounty.gov/etc/voter/index.php",
+            "headers": "Content-Type: application/x-www-form-urlencoded",
+            "body": "v[lname]=&v[dobm]=MM&v[dobd]=DD&v[doby]=YYYY&v[no]={{query.number}}&v[sname]={{query.street}}&v[zip]={{query.zip}}&submit=Get+Voter+Info",
+            "responses": {
+              "dsabilities_success": {
+                "contains": "disabilities",
+                "then": "{\"success\": true, \"disabilities\": true, \"polling_place_text\": \"{{jquery_text '#poll'}}\"}"
+              },
+              "success": {
+                "contains": "District Information",
+                "then": "{\"success\": true, \"polling_place_text\": \"{{jquery_text '#poll'}}\"}"
+              },
+              "failure": {
+                "contains": "",
+                "then": "{\"success\": false}"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```
+( More examples are located within `client/examples` )
 
 Upload to the cloud
 ---
