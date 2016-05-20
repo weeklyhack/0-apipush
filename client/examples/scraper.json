@@ -1,0 +1,28 @@
+{
+  "name": "My Api",
+  "slug": "http",
+  "versions": {
+    "v1": {
+      "routes": [
+        {
+          "accept": {
+            "method": "GET",
+            "url": "/"
+          },
+          "proxy": {
+            "via": "http",
+            "method": "POST",
+            "url": "http://www.monroecounty.gov/etc/voter/index.php",
+            "body": "v[no]=123&v[sname]=street&v[zip]=12345",
+            "responses": {
+              "success": {
+                "contains": "",
+                "then": "{\"success\": true, \"time\": \"{{proxy.body}}\"}"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
