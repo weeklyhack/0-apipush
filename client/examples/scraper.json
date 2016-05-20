@@ -14,7 +14,7 @@
             "method": "POST",
             "url": "http://www.monroecounty.gov/etc/voter/index.php",
             "headers": "Content-Type: application/x-www-form-urlencoded",
-            "body": "v[lname]=&v[dobm]=MM&v[dobd]=DD&v[doby]=YYYY&v[no]=43&v[sname]=ROSLYN%20ST&v[zip]=14619&submit=Get+Voter+Info",
+            "body": "v[lname]=&v[dobm]=MM&v[dobd]=DD&v[doby]=YYYY&v[no]={{query.number}}&v[sname]={{query.street}}&v[zip]={{query.zip}}&submit=Get+Voter+Info",
             "responses": {
               "dsabilities_success": {
                 "contains": "disabilities",

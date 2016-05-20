@@ -26,10 +26,10 @@ export function sendResponseIfApplicable(res, responses, data, stashApi) {
           // register a jquery helper to fetch data from inside of xml, and get
           // the contents of an imput
           Handlebars.registerHelper('jquery_text', function(context) {
-            return jQuery(context).text().trim();
+            return jQuery(context).text().trim().split('\n').join('');
           });
           Handlebars.registerHelper('jquery_val', function(context) {
-            return jQuery(context).val().trim();
+            return jQuery(context).val().trim().split('\n').join('');
           });
         }
 
