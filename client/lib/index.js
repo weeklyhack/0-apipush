@@ -8,7 +8,7 @@ const baseUrl = process.env.SERVER_URL || "http://apipush.apps.rgaus.net";
 import chalk from 'chalk';
 import isJSON from 'is-json';
 
-import {getLoginCredentials, saveLoginCredentials} from './auth';
+import {getLoginCredentials, saveLoginCredentials, logOut} from './auth';
 import printHelpfulError from './errors';
 import log from './log';
 import createNewApi from './newapi';
@@ -17,6 +17,8 @@ if (argv.init) {
   createNewApi(argv.init).catch(err => {
     throw err;
   });
+} else if (argv.logout) {
+  logOut();
 } else if (argv._.length) {
   // push the specified api
   let authCredentials;
@@ -55,5 +57,12 @@ if (argv.init) {
     log(`(and, get metadata information at ${chalk.yellow(data.routes.meta)})`);
   }).catch(printHelpfulError);
 } else {
-  console.error("Error: specify a api file as an argument.");
+  console.log(chalk.bold(chalk.green("apipush help")));
+  console.log("Push simple apis to the cloud. Built by Ryan Gaus in a week. See http://blog.rgaus.net for mre info.");
+  console.log();
+  console.log("Commands:");
+  console.log("  apipush api.json - push an api to the cloud");
+  console.log("  apipush --init - create a new api");
+  console.log("  apipush --logout - log out of a stored user session.");
+  console.log("For more information and documentation, visit https://github.com/1egoman/0-apipush");
 }

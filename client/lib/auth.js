@@ -3,6 +3,7 @@ import {promptAsync as inquirer} from 'inquirer-async';
 import dotfun from 'dotfun';
 import log from './log';
 const dotfile = dotfun(".pushsecret");
+dotfile.set("account", null)
 
 export function askForLoginCredentialsFromUser(existingCredentials={}) {
   console.log("Please login or create an account by entering below an email and a password:");
@@ -64,4 +65,9 @@ export function saveLoginCredentials({email, password, savePassword}, api) {
   dotfile.set("account", settings);
   dotfile.set("api", api);
   return {email, password, savePassword};
+}
+
+export function logOut() {
+  dotfile.set("account", null);
+  console.log("Logged out.");
 }
