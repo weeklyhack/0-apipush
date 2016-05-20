@@ -20,13 +20,13 @@ export function askForLoginCredentialsFromUser(existingCredentials={}) {
       message: (answers) => `Password for ${existingCredentials.email || answers.email}`,
       when: () => !existingCredentials.password,
     },
-    {
-      type: "list",
-      name: "savePassword",
-      choices: ["No (more secure)", "Yes"],
-      message: "Save Password?",
-      when: () => !existingCredentials.password,
-    },
+    // {
+    //   type: "list",
+    //   name: "savePassword",
+    //   choices: ["No (more secure)", "Yes"],
+    //   message: "Save Password?",
+    //   when: () => !existingCredentials.password,
+    // },
   ]);
 }
 
