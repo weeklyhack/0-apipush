@@ -13,11 +13,16 @@
             "via": "http",
             "method": "POST",
             "url": "http://www.monroecounty.gov/etc/voter/index.php",
-            "body": "v[no]=123&v[sname]=street&v[zip]=12345",
+            "headers": "Content-Type: application/x-www-form-urlencoded",
+            "body": "v[lname]=&v[dobm]=MM&v[dobd]=DD&v[doby]=YYYY&v[no]=43&v[sname]=ROSLYN%20ST&v[zip]=14619&submit=Get+Voter+Info",
             "responses": {
+              "dsabilities_success": {
+                "contains": "disabilities",
+                "then": "{\"success\": true, \"disabilities\": true, \"polling_place_text\": \"{{jquery_text '#poll'}}\"}"
+              },
               "success": {
                 "contains": "",
-                "then": "{\"success\": true, \"time\": \"{{proxy.body}}\"}"
+                "then": "{\"success\": true, \"polling_place_text\": \"{{jquery_text '#poll'}}\"}"
               }
             }
           }
