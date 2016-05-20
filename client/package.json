@@ -1,6 +1,6 @@
 {
   "name": "apipush",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -18,6 +18,7 @@
     "chalk": "^1.1.3",
     "dotfun": "^0.9.1",
     "inquirer-async": "^1.1.0",
+    "is-json": "^2.0.0",
     "minimist": "^1.2.0",
     "request-promise": "^3.0.0"
   },
