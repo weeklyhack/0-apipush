@@ -97,6 +97,7 @@ the title. The `jquery_text` helper gets the text of the passed css selector.
   }
 }
 ```
+
 An example of an actual API
 ---
 This api returns voting data for monroe county, a county in upstate new york. It
