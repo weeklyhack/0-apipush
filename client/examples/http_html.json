@@ -1,0 +1,27 @@
+{
+  "name": "My Api",
+  "slug": "http",
+  "versions": {
+    "v1": {
+      "routes": [
+        {
+          "accept": {
+            "method": "GET",
+            "url": "/"
+          },
+          "proxy": {
+            "via": "http",
+            "method": "GET",
+            "url": "http://google.com",
+            "responses": {
+              "success": {
+                "contains": "",
+                "then": "{\"success\": true, \"time\": \"{{jquery_text 'title'}}\"}"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
