@@ -16,7 +16,7 @@ export default function createNewApi(filename) {
       message: "Machine-readable slug for this api",
     },
   ]).then(answers => {
-    let newApi = JSON.stringify({
+    let newApi = {
       name: answers.name,
       versions: {
         v1: {
@@ -34,18 +34,19 @@ export default function createNewApi(filename) {
           ]
         },
       },
-    }, null, 2);
+    };
 
     // add slug, if possible
     if (answers.slug) {
       newApi.slug = answers.slug;
     }
 
+    console.log( path.join(process.cwd(), filename), process.cwd(), filename, newApi)
     fs.writeFile(
       path.join(process.cwd(), filename)
-    , newApi, (err) => {
+    , JSON.stringify(newApi, null, 2), (err) => {
       if (err) {
-        throw err;
+        console.error(err);
       } else {
         log(`Created new api ${filename}!`);
       }

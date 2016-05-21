@@ -14,9 +14,7 @@ import log from './log';
 import createNewApi from './newapi';
 
 if (argv.init) {
-  createNewApi(argv.init).catch(err => {
-    throw err;
-  });
+  createNewApi(argv.init);
 } else if (argv.logout) {
   logOut();
 } else if (argv._.length) {
