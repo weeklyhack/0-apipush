@@ -12,7 +12,6 @@ const UserModel = mongoose.model('User', {
 
 function getByEmailPassword(email, password) {
   let globalUser;
-  UserModel.findOne({email}).then(console.error.bind(console))
   return UserModel.findOne({email})
   .then(user => {
     if (user) {
@@ -28,12 +27,19 @@ function getByEmailPassword(email, password) {
     } else {
       return null;
     }
+  }).catch(error => {
+    // catch password mismatch errors
+    if (error instanceof bcrypt.MISMATCH_ERROR) {
+      return false;
+    } else {
+      throw error;
+    }
   });
 }
 
 function createAccount(email, password) {
   let globalUser, salt = uuid();
-  return getByEmailPassword(email, password)
+  return exports.default.getByEmailPassword(email, password)
   .then(user => {
     if (user === null) {
       globalUser = user;
@@ -59,4 +65,4 @@ function createAccount(email, password) {
   });
 }
 
-export default {getByEmailPassword, createAccount};
+export default {getByEmailPassword, createAccount, UserModel};

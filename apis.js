@@ -7,19 +7,10 @@ import validate from "./validator";
 import _ from "lodash";
 import mongoose from 'mongoose';
 
-const ApiModel = mongoose.model('Api', {
+let ApiModel = mongoose.model('Api', {
   model: Object,
   slug: String,
 });
-
-function getSlugVersion(slug, version) {
-  let slugData = data.find(i => i.slug === slug);
-  if (slugData) {
-    return slugData.versions[version];
-  } else {
-    return false;
-  }
-}
 
 // assign each api and each route an id. Also, give the api a secret.
 function injectIds(api) {
@@ -55,10 +46,11 @@ function injectIds(api) {
   }
 }
 
-
-
-function findAll() {
-  return ApiModel.find({});
+function upsertApi(api) {
+  return ApiModel.update({slug: api.slug}, {
+    model: api,
+    slug: api.slug,
+  }, {upsert: true});
 }
 
 function findWithSlug(slug) {
@@ -78,7 +70,7 @@ function findWithSlug(slug) {
 function create(api, user) {
   if (api && _.isPlainObject(api)) {
     // does an api already exist with this slug?
-    return findWithSlug(api.slug)
+    return exports.default.findWithSlug(api.slug)
     .then(match => {
       // no slug? make one up
       if (typeof api.slug === "undefined") {
@@ -100,10 +92,7 @@ function create(api, user) {
         let validation = validate(api);
         if (validation.errors.length === 0) {
           // upsert the model
-          return ApiModel.update({slug: api.slug}, {
-            model: api,
-            slug: api.slug,
-          }, {upsert: true});
+          return exports.default.upsertApi(api);
         } else {
           throw new VisibleError(400, `Schema Validation Errors: ${validation.errors.toString()}`);
         }
@@ -118,4 +107,4 @@ function create(api, user) {
   }
 };
 
-export default {findAll, findWithSlug, create};
+export default {findWithSlug, create, upsertApi, ApiModel};
