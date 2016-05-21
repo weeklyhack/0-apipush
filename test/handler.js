@@ -1,5 +1,6 @@
-import {handleApiRequest, getApiInformation, createApi} from "../handler";
+import {handleApiRequest, getApiInformation, createApi, useBasicAuth} from "../handler";
 import Api from "../apis";
+import User from "../users";
 import assert from 'assert';
 import {v4 as uuid} from "uuid";
 import VisibleError from "../visibleError";
@@ -582,6 +583,96 @@ describe("createApi", function() {
         body: {options: {}, data: api1.model},
         user: user1,
       }), res);
+    });
+  });
+});
+
+describe("useBasicAuth", function() {
+  describe("with a valid user", function() {
+    beforeEach(() => {
+      let getByEmailPassword = sinon.stub(User, "getByEmailPassword");
+      getByEmailPassword.withArgs("username", "password").resolves(user1);
+      getByEmailPassword.withArgs().resolves(null);
+      let createAccount = sinon.stub(User, "createAccount");
+      createAccount.withArgs("username", "password").resolves(user1);
+      createAccount.withArgs("foo", "bar").resolves(user1);
+      createAccount.withArgs().resolves(null);
+    });
+    afterEach(() => {
+      User.getByEmailPassword.restore();
+      User.createAccount.restore();
+    });
+
+    it("should auth a user", function(done) {
+      let req = {
+        headers: {
+          authorization: `Basic ${new Buffer("username:password").toString('base64')}`
+        },
+      };
+
+      useBasicAuth(req, {}, () => {
+        assert.deepEqual(req.user, user1);
+        done();
+      });
+    });
+    it("should not let a bad password log in a user", function(done) {
+      let req = {
+        headers: {
+          authorization: `Basic ${new Buffer("username:bad password").toString('base64')}`
+        },
+      };
+
+      useBasicAuth(req, {}, () => {
+        assert.deepEqual(req.user, null);
+        done();
+      });
+    });
+    it("should create an account for a non-existing user", function(done) {
+      let req = {
+        headers: {
+          authorization: `Basic ${new Buffer("foo:bar").toString('base64')}`
+        },
+      };
+
+      useBasicAuth(req, {}, () => {
+        assert.deepEqual(req.user, user1);
+        done();
+      });
+    });
+  });
+  describe("with an invalid user", function() {
+    beforeEach(() => {
+      let getByEmailPassword = sinon.stub(User, "getByEmailPassword").rejects("Thrown Error");
+    });
+    afterEach(() => {
+      User.getByEmailPassword.restore();
+    });
+
+    it("should not let a bad password log in a user", function(done) {
+      let req = {
+        headers: {
+          authorization: `Basic ${new Buffer("foo:bar").toString('base64')}`
+        },
+      };
+
+      let res = {
+        status(code) {
+          assert.equal(code, 500);
+          return res;
+        },
+        json(data) {
+          assert.deepEqual(data, {
+            error: "Thrown Error",
+            code: undefined,
+          });
+          done();
+          return res;
+        },
+      };
+
+      useBasicAuth(req, res, () => {
+        assert.equal(false, "Shouldn't continue down the middleware chain.");
+      });
     });
   });
 });
