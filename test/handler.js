@@ -1,4 +1,4 @@
-import {handleApiRequest, getApiInformation} from "../handler";
+import {handleApiRequest, getApiInformation, createApi} from "../handler";
 import Api from "../apis";
 import assert from 'assert';
 import {v4 as uuid} from "uuid";
@@ -161,7 +161,7 @@ let api2_no_matching_event = {
   slug: "abc",
 };
 
-function generateReq({method, path, slug, version}) {
+function generateReq({method, path, slug, version, body, user}) {
   let url = `/${slug}/api/${version}${path}`;
   return {
     method,
@@ -173,6 +173,8 @@ function generateReq({method, path, slug, version}) {
     _parsedOriginalUrl: {
       pathname: url,
     },
+    body,
+    user,
   };
 }
 
@@ -439,6 +441,147 @@ describe("getApiInformation", function() {
         },
       };
       getApiInformation(generateReq({method: "GET", slug: "abc", version: "v1", path: "/data"}), res);
+    });
+  });
+});
+
+describe("createApi", function() {
+  describe("with a successful api creation", function() {
+    beforeEach(() => {
+      sinon.stub(Api, "create").resolves({api: api1.model});
+    });
+    afterEach(() => {
+      Api.create.restore();
+    });
+
+    it("should successfully create an api", function(done) {
+      let res = {
+        send(data) {
+          assert.deepEqual(data.status, 200);
+          assert.deepEqual(data.routes, {
+            root: "http://apipush.apps.rgaus.net/abc/api/",
+            example: "http://apipush.apps.rgaus.net/abc/api/v1",
+            meta: "http://apipush.apps.rgaus.net/abc/api/_meta.json",
+          });
+          assert.deepEqual(data.account, {
+            publishedBy: user1.email,
+            newAccount: false,
+          });
+          done();
+        },
+      };
+      createApi(generateReq({
+        method: "GET",
+        slug: "abc",
+        version: "v1",
+        path: "/data",
+        body: {options: {}, data: api1.model},
+        user: user1,
+      }), res);
+    });
+    it("should successfully create an api, with a new user", function(done) {
+      let user = Object.assign({}, user1, {_newuser: true});
+      let res = {
+        send(data) {
+          assert.deepEqual(data.status, 200);
+          assert.deepEqual(data.routes, {
+            root: "http://apipush.apps.rgaus.net/abc/api/",
+            example: "http://apipush.apps.rgaus.net/abc/api/v1",
+            meta: "http://apipush.apps.rgaus.net/abc/api/_meta.json",
+          });
+          assert.deepEqual(data.account, {
+            publishedBy: user.email,
+            newAccount: true,
+          });
+          done();
+        },
+      };
+      createApi(generateReq({
+        method: "GET",
+        slug: "abc",
+        version: "v1",
+        path: "/data",
+        body: {options: {}, data: api1.model},
+        user,
+      }), res);
+    });
+    it("should not create an api with empty input params", function(done) {
+      let res = {
+        status(code) {
+          assert.equal(code, 400);
+          return res;
+        },
+        send(data) {
+          assert.deepEqual(data, {
+            error: "Invalid request format. Please include a data and options key."
+          });
+          done();
+        },
+      };
+      createApi(generateReq({
+        method: "GET",
+        slug: "abc",
+        version: "v1",
+        path: "/data",
+        body: {}, // empty body
+        user: user1,
+      }), res);
+    });
+    it("should not create an api with bad input params", function(done) {
+      let res = {
+        status(code) {
+          assert.equal(code, 400);
+          return res;
+        },
+        send(data) {
+          assert.deepEqual(data, {
+            error: "Invalid request format. Please include a data and options key."
+          });
+          done();
+        },
+      };
+      createApi(generateReq({
+        method: "GET",
+        slug: "abc",
+        version: "v1",
+        path: "/data",
+        body: {options: false, body: true}, // bad body
+        user: user1,
+      }), res);
+    });
+  });
+  describe("with a failed api creation", function() {
+    beforeEach(() => {
+      sinon.stub(Api, "create").rejects("Thrown Error");
+    });
+    afterEach(() => {
+      Api.create.restore();
+    });
+
+    it("should not create an api when errors happen", function(done) {
+      let res = {
+        status(code) {
+          assert.equal(code, 500);
+          return res;
+        },
+        send(data) {
+          assert.deepEqual(data, {
+            error: "Thrown Error",
+            code: undefined,
+          });
+          done();
+          return res;
+        },
+      };
+      res.json = res.send;
+      createApi(generateReq({
+        method: "GET",
+        slug: "abc",
+        version: "v1",
+        path: "/data",
+        body: {options: {}, data: api1.model},
+        user: user1,
+      }), res);
     });
   });
 });

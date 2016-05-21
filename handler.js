@@ -137,7 +137,7 @@ export function getApiInformation(req, res) {
 }
 
 export function createApi(req, res) {
-  if (req.body.options && req.body.data) {
+  if (_.isPlainObject(req.body.options) && _.isPlainObject(req.body.data)) {
     return Api.create(req.body.data, req.user)
     .then(data => {
       res.send({
@@ -151,7 +151,7 @@ export function createApi(req, res) {
         },
         account: {
           publishedBy: req.user.email,
-          newAccount: req.user._newuser,
+          newAccount: req.user._newuser || false,
         },
       });
     })
