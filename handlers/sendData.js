@@ -7,7 +7,7 @@ export default function sendData(res, data) {
   if (isJSON(data)) {
     res.header("content-type", "application/json");
   }
-  res.send(data);
+  res.status(200).send(data);
 }
 
 export function sendResponseIfApplicable(res, responses, data, stashApi) {

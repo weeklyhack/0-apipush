@@ -48,7 +48,7 @@ let api1 = {
   slug: "abc",
 };
 
-describe.only("users", function() {
+describe("users", function() {
   describe("getByEmailPassword", function() {
     describe("with find resolving a user", function() {
       beforeEach(() => {

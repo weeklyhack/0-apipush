@@ -1,8 +1,10 @@
 import Handlebars from "handlebars";
 import request from "request";
+import requestPromise from "request-promise";
 import isJSON from "is-json";
 import isXML from "is-xml";
 
+import VisibleError from "../visibleError";
 import parseHeaders from "../parseHeaders";
 import {default as sendData, sendResponseIfApplicable} from "./sendData";
 
@@ -20,38 +22,38 @@ export default function handleHttpQuery(req, res, stashApi, routeData) {
     }
   }
 
+
   // send the response
   if (dataRender.responses) {
-    request(dataRender, (err, resp, body) => {
-      if (err) {
-        res.json({error: err.toString()});
-      } else {
-        // parse the json data, if the data is json
-        let parsedBody = body;
-        if (isJSON(body)) {
-          parsedBody = JSON.parse(body);
+    requestPromise(dataRender)
+    .then(body => {
+      // parse the json data, if the data is json
+      let parsedBody = body;
+      if (isJSON(body)) {
+        parsedBody = JSON.parse(body);
 
-        // label xml data ax xml for later
-        } else if (isXML(body)) {
-          parsedBody = {
-            _ishtml: true,
-            data: body,
-          };
-        }
-
-        // assemble the stash data for the http request
-        let httpStashApi = Object.assign({}, stashApi, {
-          proxy: {
-            body: parsedBody,
-          },
-        });
-
-        return sendResponseIfApplicable(res, dataRender.responses, body, httpStashApi).then(success => {
-          if (!success) {
-            throw new VisibleError(502, "No matching event was ever received in response to this request.")
-          }
-        });
+      // label xml data ax xml for later
+      } else if (isXML(body)) {
+        parsedBody = {
+          _ishtml: true,
+          data: body,
+        };
       }
+
+      // assemble the stash data for the http request
+      let httpStashApi = Object.assign({}, stashApi, {
+        proxy: {
+          body: parsedBody,
+        },
+      });
+
+      return sendResponseIfApplicable(res, dataRender.responses, body, httpStashApi).then(success => {
+        if (!success) {
+          throw new VisibleError(502, "No matching event was ever received in response to this request.")
+        }
+      });
+    }).catch(err => {
+      res.json({error: err.toString()});
     });
   } else {
     // no preset responses? Just send what we get.
