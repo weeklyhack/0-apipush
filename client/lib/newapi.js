@@ -41,7 +41,6 @@ export default function createNewApi(filename) {
       newApi.slug = answers.slug;
     }
 
-    console.log( path.join(process.cwd(), filename), process.cwd(), filename, newApi)
     fs.writeFile(
       path.join(process.cwd(), filename)
     , JSON.stringify(newApi, null, 2), (err) => {
