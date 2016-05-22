@@ -80,7 +80,7 @@ function create(api, user) {
           api.slug = randomWords(process.env.SLUG_WORD_LENGTH || 3).join("-");
         }
       }
-      let isUpdate = match && match.api && user._id.toString() === match.api.createdBy.toString();
+      let isUpdate = match && match.createdBy && user._id.toString() === match.createdBy.toString();
 
       // if the api is being updated or a new one is being created
       if (isUpdate || !match) {

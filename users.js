@@ -29,7 +29,7 @@ function getByEmailPassword(email, password) {
     }
   }).catch(error => {
     // catch password mismatch errors
-    if (error instanceof bcrypt.MISMATCH_ERROR) {
+    if (error.message === "invalid") {
       return false;
     } else {
       throw error;
