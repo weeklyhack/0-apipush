@@ -38,11 +38,10 @@ function getByEmailPassword(email, password) {
 }
 
 function createAccount(email, password) {
-  let globalUser, salt = uuid();
+  let salt = uuid();
   return exports.default.getByEmailPassword(email, password)
   .then(user => {
     if (user === null) {
-      globalUser = user;
 
       // create the user
       return bcrypt.hash(`${password}${salt}`, 10);
@@ -54,10 +53,9 @@ function createAccount(email, password) {
       return new UserModel({
         email,
         passwordHash: hash,
-        passwordSalt: salt,
-      }).save()
-      .then(() => {
-        return Object.assign({}, globalUser, { _newuser: true });
+        passwordSalt: salt
+      }).save().then((user) => {
+        return Object.assign({}, user._doc, { _newuser: true });
       });
     } else {
       return false;
